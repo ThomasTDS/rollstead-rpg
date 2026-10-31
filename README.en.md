@@ -1,5 +1,7 @@
 # Rollstead
 
+[![CI](https://github.com/ThomasTDS/rollstead-rpg/actions/workflows/ci.yml/badge.svg)](https://github.com/ThomasTDS/rollstead-rpg/actions/workflows/ci.yml)
+
 [Português](README.md) · **English** · [Español](README.es.md)
 
 > Play the session. Keep the story.
@@ -103,6 +105,21 @@ The database is never changed by hand: every schema change is a versioned migrat
 - A published migration is never edited; fixes go into a new migration.
 - Every table in the `public` schema must have RLS (Row Level Security) enabled. A test in `supabase/tests/database/rls_enabled.test.sql` fails if any table is created without it.
 - The keys shown by `npm run db:status` are the local Supabase demo keys, identical in every installation. Keys for the real environment never go into the repository.
+
+## Continuous integration
+
+Every pull request and every push to `main` runs on GitHub Actions (`.github/workflows/ci.yml`). A pull request can only be merged when both jobs pass:
+
+| Job        | What it checks                                                                   |
+| ---------- | -------------------------------------------------------------------------------- |
+| `quality`  | Formatting, lint, types and production build.                                    |
+| `database` | Starts the local Supabase database from the migrations and runs the pgTAP tests. |
+
+To check locally before opening a pull request, with the local database running:
+
+```bash
+npm run format:check && npm run lint && npm run typecheck && npm run build && npm run test:db
+```
 
 ## Code conventions
 
