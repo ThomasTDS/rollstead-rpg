@@ -1,0 +1,2 @@
+-- Local development data, applied after migrations on `npm run db:reset`.
+-- Keep it empty until there is data worth seeding.
