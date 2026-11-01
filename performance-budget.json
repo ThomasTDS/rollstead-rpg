@@ -1,0 +1,17 @@
+{
+  "initialBundleKb": 250,
+  "lighthouse": {
+    "runs": 3,
+    "minScores": {
+      "performance": 90,
+      "accessibility": 90
+    }
+  },
+  "slowDevice": {
+    "cpuSlowdown": 4,
+    "latencyMs": 400,
+    "downloadKbps": 400,
+    "uploadKbps": 400,
+    "maxSecondsToUsable": 10
+  }
+}

@@ -68,25 +68,27 @@ En desarrollo inicial. Todavía no hay una versión jugable.
 
 ## Comandos disponibles
 
-| Comando                | Qué hace                                                                                                    |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `npm run dev`          | Inicia el servidor de desarrollo con recarga automática.                                                    |
-| `npm run build`        | Verifica los tipos y genera la versión de producción en la carpeta `dist/`.                                 |
-| `npm run preview`      | Sirve localmente la versión generada por `build`.                                                           |
-| `npm run lint`         | Analiza el código con ESLint. Falla ante cualquier error o advertencia.                                     |
-| `npm run typecheck`    | Verifica los tipos de TypeScript sin generar archivos.                                                      |
-| `npm run format`       | Formatea todos los archivos con Prettier.                                                                   |
-| `npm run format:check` | Comprueba el formato sin modificar los archivos.                                                            |
-| `npm run db:start`     | Levanta el Supabase local en Docker y aplica las migraciones.                                               |
-| `npm run db:stop`      | Detiene los contenedores del Supabase local, conservando los datos.                                         |
-| `npm run db:reset`     | Recrea la base de datos local desde cero, aplicando todas las migraciones y el `seed.sql`.                  |
-| `npm run db:status`    | Muestra las direcciones y claves del entorno local.                                                         |
-| `npm run test:db`      | Ejecuta las pruebas pgTAP de la base de datos (requiere la base local en ejecución).                        |
-| `npm test`             | Ejecuta las pruebas unitarias y de componentes (Vitest).                                                    |
-| `npm run test:watch`   | Ejecuta Vitest en modo observación, repitiendo las pruebas en cada cambio.                                  |
-| `npm run test:api`     | Ejecuta las pruebas de API (Playwright) contra el Supabase local (requiere el Supabase local en ejecución). |
-| `npm run test:e2e`     | Ejecuta las pruebas E2E (Playwright) en Chromium contra el build local (ejecuta `npm run build` antes).     |
-| `npm run test:smoke`   | Ejecuta solo las pruebas marcadas con `@smoke`; con `PLAYWRIGHT_BASE_URL`, apunta a un sitio publicado.     |
+| Comando                   | Qué hace                                                                                                    |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `npm run dev`             | Inicia el servidor de desarrollo con recarga automática.                                                    |
+| `npm run build`           | Verifica los tipos y genera la versión de producción en la carpeta `dist/`.                                 |
+| `npm run preview`         | Sirve localmente la versión generada por `build`.                                                           |
+| `npm run lint`            | Analiza el código con ESLint. Falla ante cualquier error o advertencia.                                     |
+| `npm run typecheck`       | Verifica los tipos de TypeScript sin generar archivos.                                                      |
+| `npm run format`          | Formatea todos los archivos con Prettier.                                                                   |
+| `npm run format:check`    | Comprueba el formato sin modificar los archivos.                                                            |
+| `npm run db:start`        | Levanta el Supabase local en Docker y aplica las migraciones.                                               |
+| `npm run db:stop`         | Detiene los contenedores del Supabase local, conservando los datos.                                         |
+| `npm run db:reset`        | Recrea la base de datos local desde cero, aplicando todas las migraciones y el `seed.sql`.                  |
+| `npm run db:status`       | Muestra las direcciones y claves del entorno local.                                                         |
+| `npm run test:db`         | Ejecuta las pruebas pgTAP de la base de datos (requiere la base local en ejecución).                        |
+| `npm test`                | Ejecuta las pruebas unitarias y de componentes (Vitest).                                                    |
+| `npm run test:watch`      | Ejecuta Vitest en modo observación, repitiendo las pruebas en cada cambio.                                  |
+| `npm run test:api`        | Ejecuta las pruebas de API (Playwright) contra el Supabase local (requiere el Supabase local en ejecución). |
+| `npm run test:e2e`        | Ejecuta las pruebas E2E (Playwright) en Chromium contra el build local (ejecuta `npm run build` antes).     |
+| `npm run test:smoke`      | Ejecuta solo las pruebas marcadas con `@smoke`; con `PLAYWRIGHT_BASE_URL`, apunta a un sitio publicado.     |
+| `npm run perf:bundle`     | Mide el paquete inicial comprimido y falla si supera el presupuesto (ejecuta `npm run build` antes).        |
+| `npm run perf:lighthouse` | Ejecuta Lighthouse tres veces contra el build local y falla si la mediana queda por debajo del mínimo.      |
 
 ## Estructura del proyecto
 
@@ -101,6 +103,7 @@ rollstead-rpg/
 │   ├── styles/          # Tema: tokens de color (theme.css), únicos con valores de color
 │   ├── test/setup.ts    # Preparación de las pruebas de componentes
 │   └── main.tsx         # Punto de entrada
+├── scripts/             # Verificaciones del presupuesto de rendimiento
 ├── supabase/
 │   ├── config.toml      # Configuración del Supabase local
 │   ├── migrations/      # Migraciones de la base de datos, aplicadas en orden
@@ -113,6 +116,7 @@ rollstead-rpg/
 │       └── fixtures.ts  # Fixtures que entregan los Page Objects a las pruebas
 ├── index.html           # Página base cargada por Vite
 ├── eslint.config.js     # Reglas de lint
+├── performance-budget.json # Límites de rendimiento aplicados en el CI
 ├── playwright*.ts       # Configuración de Playwright (E2E y API)
 ├── tsconfig*.json       # Configuración de TypeScript
 ├── vite.config.ts       # Configuración de Vite
@@ -187,6 +191,7 @@ Cada pull request y cada push a la rama `main` pasan por GitHub Actions (`.githu
 | `unit`                                                | Pruebas unitarias y de componentes (Vitest).                                                                                   |
 | `api`                                                 | Levanta la API del Supabase local y ejecuta las pruebas de API (Playwright).                                                   |
 | `e2e`                                                 | Ejecuta las pruebas E2E (Playwright, Chromium) contra el mismo build generado por el job `quality`.                            |
+| `performance`                                         | Comprueba el tamaño del paquete inicial y las notas de Lighthouse frente al presupuesto de rendimiento.                        |
 | `secrets`                                             | Busca contraseñas y tokens en todo el historial de Git con [Gitleaks](https://github.com/gitleaks/gitleaks).                   |
 | `codeql (javascript-typescript)` y `codeql (actions)` | Análisis de seguridad del código y de los workflows con [CodeQL](https://codeql.github.com/) (`.github/workflows/codeql.yml`). |
 
@@ -213,6 +218,20 @@ Para comprobar el paquete localmente, sin publicar nada:
 npm run build
 npx wrangler deploy --dry-run
 ```
+
+## Presupuesto de rendimiento
+
+Rollstead debe abrir rápido en PC modestos y conexiones inestables. Los límites están en `performance-budget.json` y se aplican en el CI:
+
+| Control                                                                  | Límite actual                    | Dónde se ejecuta                              |
+| ------------------------------------------------------------------------ | -------------------------------- | --------------------------------------------- |
+| Paquete inicial (JS + CSS que carga el `index.html`, comprimidos)        | hasta 250 KB                     | job `performance` (`npm run perf:bundle`)     |
+| Lighthouse (móvil, red y CPU lentas simuladas), mediana de 3 ejecuciones | rendimiento y accesibilidad ≥ 90 | job `performance` (`npm run perf:lighthouse`) |
+| PC y red lentos (CPU 4 veces más lenta, 400 kbps, 400 ms de latencia)    | página utilizable en hasta 10 s  | job `e2e` (`tests/e2e/slow-device.spec.ts`)   |
+
+Los archivos de traducción no cuentan en el paquete inicial, porque se descargan aparte, solo el del idioma en uso. Los valores se revisarán en la beta.
+
+Lighthouse usa el Google Chrome instalado o, si no lo hay, el Chromium de Playwright. Los antivirus que inyectan scripts en las páginas (como Kaspersky) distorsionan la nota medida localmente; la nota que vale es la del CI.
 
 ## Seguridad
 

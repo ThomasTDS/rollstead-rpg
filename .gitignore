@@ -21,6 +21,7 @@ supabase/.temp/
 test-results/
 playwright-report/
 blob-report/
+lighthouse-report/
 playwright/.cache/
 
 # Logs
