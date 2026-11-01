@@ -114,12 +114,14 @@ The database is never changed by hand: every schema change is a versioned migrat
 
 ## Continuous integration
 
-Every pull request and every push to `main` runs on GitHub Actions (`.github/workflows/ci.yml`). A pull request can only be merged when both jobs pass:
+Every pull request and every push to `main` runs on GitHub Actions (`.github/workflows/ci.yml`). A pull request can only be merged when all of these jobs pass:
 
-| Job        | What it checks                                                                   |
-| ---------- | -------------------------------------------------------------------------------- |
-| `quality`  | Formatting, lint, types and production build.                                    |
-| `database` | Starts the local Supabase database from the migrations and runs the pgTAP tests. |
+| Job                                                     | What it checks                                                                                                          |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `quality`                                               | Formatting, lint, types and production build.                                                                           |
+| `database`                                              | Starts the local Supabase database from the migrations and runs the pgTAP tests.                                        |
+| `secrets`                                               | Scans the whole Git history for passwords and tokens with [Gitleaks](https://github.com/gitleaks/gitleaks).             |
+| `codeql (javascript-typescript)` and `codeql (actions)` | Security analysis of the code and workflows with [CodeQL](https://codeql.github.com/) (`.github/workflows/codeql.yml`). |
 
 To check locally before opening a pull request, with the local database running:
 
@@ -129,7 +131,7 @@ npm run format:check && npm run lint && npm run typecheck && npm run build && np
 
 ## Deployment
 
-Deployment is automatic: on every merge to `main`, after `quality` and `database` pass, GitHub Actions publishes the build to [rollstead.com.br](https://rollstead.com.br) through Cloudflare Workers.
+Deployment is automatic: on every merge to `main`, after `quality`, `database` and `secrets` pass, GitHub Actions publishes the build to [rollstead.com.br](https://rollstead.com.br) through Cloudflare Workers.
 
 | Job      | What it does                                                                                        |
 | -------- | --------------------------------------------------------------------------------------------------- |
@@ -144,6 +146,17 @@ To check the bundle locally without publishing anything:
 npm run build
 npx wrangler deploy --dry-run
 ```
+
+## Security
+
+| Protection               | What it does                                                                                                                        |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Gitleaks (`secrets` job) | Blocks the merge if it finds a password or token in any commit.                                                                     |
+| GitHub push protection   | Rejects pushes containing tokens from known services before they reach the repository.                                              |
+| CodeQL                   | Analyzes the code and workflows on every pull request, every push to `main` and every Monday. High-severity alerts block the merge. |
+| Dependabot               | Alerts on dependencies with known vulnerabilities and opens update pull requests (npm and GitHub Actions) every Monday.             |
+
+If a real secret is pushed by mistake, deleting it from the code is not enough: it stays in the history. Revoke the key at its source service and issue a new one.
 
 ## Code conventions
 
