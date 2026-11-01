@@ -114,12 +114,14 @@ La base de datos nunca se modifica a mano: cada cambio de estructura es una migr
 
 ## Integración continua
 
-Cada pull request y cada push a la rama `main` pasan por GitHub Actions (`.github/workflows/ci.yml`). Un pull request solo puede fusionarse con los dos jobs aprobados:
+Cada pull request y cada push a la rama `main` pasan por GitHub Actions (`.github/workflows/ci.yml`). Un pull request solo puede fusionarse con todos estos jobs aprobados:
 
-| Job        | Qué verifica                                                                                        |
-| ---------- | --------------------------------------------------------------------------------------------------- |
-| `quality`  | Formato, lint, tipos y build de producción.                                                         |
-| `database` | Levanta la base de datos local de Supabase a partir de las migraciones y ejecuta las pruebas pgTAP. |
+| Job                                                   | Qué verifica                                                                                                                   |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `quality`                                             | Formato, lint, tipos y build de producción.                                                                                    |
+| `database`                                            | Levanta la base de datos local de Supabase a partir de las migraciones y ejecuta las pruebas pgTAP.                            |
+| `secrets`                                             | Busca contraseñas y tokens en todo el historial de Git con [Gitleaks](https://github.com/gitleaks/gitleaks).                   |
+| `codeql (javascript-typescript)` y `codeql (actions)` | Análisis de seguridad del código y de los workflows con [CodeQL](https://codeql.github.com/) (`.github/workflows/codeql.yml`). |
 
 Para comprobar localmente antes de abrir un pull request, con la base local en ejecución:
 
@@ -129,7 +131,7 @@ npm run format:check && npm run lint && npm run typecheck && npm run build && np
 
 ## Despliegue
 
-El despliegue es automático: en cada merge a `main`, después de que `quality` y `database` pasen, GitHub Actions publica el build en [rollstead.com.br](https://rollstead.com.br) mediante Cloudflare Workers.
+El despliegue es automático: en cada merge a `main`, después de que `quality`, `database` y `secrets` pasen, GitHub Actions publica el build en [rollstead.com.br](https://rollstead.com.br) mediante Cloudflare Workers.
 
 | Job      | Qué hace                                                                                                |
 | -------- | ------------------------------------------------------------------------------------------------------- |
@@ -144,6 +146,17 @@ Para comprobar el paquete localmente, sin publicar nada:
 npm run build
 npx wrangler deploy --dry-run
 ```
+
+## Seguridad
+
+| Protección                   | Qué hace                                                                                                                                         |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Gitleaks (job `secrets`)     | Bloquea el merge si encuentra una contraseña o un token en cualquier commit.                                                                     |
+| Protección de push de GitHub | Rechaza el envío de commits con tokens de servicios conocidos antes de que lleguen al repositorio.                                               |
+| CodeQL                       | Analiza el código y los workflows en cada pull request, en cada push a `main` y todos los lunes. Las alertas de gravedad alta bloquean el merge. |
+| Dependabot                   | Alerta sobre dependencias con fallos conocidos y abre pull requests de actualización (npm y GitHub Actions) todos los lunes.                     |
+
+Si se envía un secreto real por error, borrarlo del código no basta: sigue en el historial. Revoca la clave en el servicio de origen y genera una nueva.
 
 ## Convenciones de código
 

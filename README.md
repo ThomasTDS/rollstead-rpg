@@ -114,12 +114,14 @@ O banco nunca é alterado à mão: toda mudança de estrutura vira uma migration
 
 ## Integração contínua
 
-Todo pull request e todo push na branch `main` passam pelo GitHub Actions (`.github/workflows/ci.yml`). Um pull request só pode ser mesclado com os dois jobs aprovados:
+Todo pull request e todo push na branch `main` passam pelo GitHub Actions (`.github/workflows/ci.yml`). Um pull request só pode ser mesclado com todos estes jobs aprovados:
 
-| Job        | O que verifica                                                                 |
-| ---------- | ------------------------------------------------------------------------------ |
-| `quality`  | Formatação, lint, tipos e build de produção.                                   |
-| `database` | Sobe o banco local do Supabase a partir das migrations e roda os testes pgTAP. |
+| Job                                                   | O que verifica                                                                                                              |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `quality`                                             | Formatação, lint, tipos e build de produção.                                                                                |
+| `database`                                            | Sobe o banco local do Supabase a partir das migrations e roda os testes pgTAP.                                              |
+| `secrets`                                             | Procura senhas e tokens em todo o histórico do Git com o [Gitleaks](https://github.com/gitleaks/gitleaks).                  |
+| `codeql (javascript-typescript)` e `codeql (actions)` | Análise de segurança do código e dos workflows com o [CodeQL](https://codeql.github.com/) (`.github/workflows/codeql.yml`). |
 
 Para conferir localmente antes de abrir um pull request, com o banco local em execução:
 
@@ -129,7 +131,7 @@ npm run format:check && npm run lint && npm run typecheck && npm run build && np
 
 ## Deploy
 
-O deploy é automático: a cada merge na `main`, depois que `quality` e `database` passam, o GitHub Actions publica o build em [rollstead.com.br](https://rollstead.com.br) pelo Cloudflare Workers.
+O deploy é automático: a cada merge na `main`, depois que `quality`, `database` e `secrets` passam, o GitHub Actions publica o build em [rollstead.com.br](https://rollstead.com.br) pelo Cloudflare Workers.
 
 | Job      | O que faz                                                                                     |
 | -------- | --------------------------------------------------------------------------------------------- |
@@ -144,6 +146,17 @@ Para testar o empacotamento localmente, sem publicar nada:
 npm run build
 npx wrangler deploy --dry-run
 ```
+
+## Segurança
+
+| Proteção                   | O que faz                                                                                                                                     |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gitleaks (job `secrets`)   | Bloqueia o merge se encontrar uma senha ou token em qualquer commit.                                                                          |
+| Proteção de push do GitHub | Recusa o envio de commits com tokens de serviços conhecidos antes que cheguem ao repositório.                                                 |
+| CodeQL                     | Analisa o código e os workflows a cada pull request, a cada push na `main` e toda segunda-feira. Alertas de gravidade alta bloqueiam o merge. |
+| Dependabot                 | Alerta sobre dependências com falhas conhecidas e abre pull requests de atualização (npm e GitHub Actions) toda segunda-feira.                |
+
+Se um segredo real for enviado por engano, apagá-lo do código não basta: ele continua no histórico. Revogue a chave no serviço de origem e gere uma nova.
 
 ## Padrões de código
 
