@@ -105,11 +105,11 @@ jobs:
 
       - run: npm ci
 
-      # Only the database, the REST API and its gateway are needed
+      # Database, REST API, auth (it also provides the API keys) and the gateway
       - name: Start local Supabase API
         run: >-
           npx supabase start
-          -x gotrue,realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
+          -x realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
 
       - name: API tests (Playwright)
         run: npm run test:api
