@@ -7,10 +7,13 @@ export function LanguageSwitcher() {
   const selectId = useId()
 
   return (
-    <div>
-      <label htmlFor={selectId}>{t('language.label')}</label>
+    <div className="flex items-center gap-2 text-sm">
+      <label htmlFor={selectId} className="text-muted">
+        {t('language.label')}
+      </label>
       <select
         id={selectId}
+        className="rounded border border-border bg-background px-2 py-1 text-foreground"
         value={i18n.resolvedLanguage}
         onChange={(event) => {
           const language = event.target.value

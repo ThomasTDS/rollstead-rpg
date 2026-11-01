@@ -22,6 +22,7 @@ Early development. There is no playable version yet.
 | -------------------- | ---------------------------------------------------------------------------------------------- |
 | Interface            | [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)                    |
 | Build and dev server | [Vite](https://vite.dev/)                                                                      |
+| Styling              | [Tailwind CSS](https://tailwindcss.com/) with theme tokens in CSS variables                    |
 | Code quality         | [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/)                               |
 | Database and API     | [Supabase](https://supabase.com/) (PostgreSQL), running locally via Docker                     |
 | Hosting              | [Cloudflare Workers](https://developers.cloudflare.com/workers/static-assets/) (Static Assets) |
@@ -97,6 +98,7 @@ rollstead-rpg/
 │   ├── components/      # Reusable components
 │   ├── i18n/            # Languages: setup and translation files (locales/)
 │   ├── lib/             # Pure logic, with each test next to its file (*.test.ts)
+│   ├── styles/          # Theme: color tokens (theme.css), the only place with color values
 │   ├── test/setup.ts    # Component test setup
 │   └── main.tsx         # Entry point
 ├── supabase/
@@ -137,6 +139,17 @@ Rollstead ships in Portuguese (default), English and Spanish, with [react-i18nex
 - Lint flags hardcoded text in components (rule `i18next/no-literal-string`).
 
 To add a text: create the key in all three translation files and use `t('key')` in the component.
+
+## Theme and colors
+
+Colors live only in `src/styles/theme.css`, as tokens with a light and a dark value (`light-dark()`). Components use the Tailwind classes generated from them, such as `bg-background`, `text-foreground` and `bg-window`, never a color value.
+
+- Tailwind's default palette is turned off: classes such as `bg-red-500` do not exist.
+- The theme follows the system preference. `data-theme="light"` or `data-theme="dark"` on `<html>` forces one of them.
+- A test scans the code and fails if it finds a hardcoded color outside `theme.css` (hex, `rgb()`, `hsl()` and similar, or the Tailwind palette).
+- Another test checks the contrast of the color pairs in both themes against WCAG: 4.5:1 for text and 3:1 for interface elements.
+
+The current palette is provisional and JRPG-inspired (parchment by day, starry night by night, blue windows and gold highlights). Changing the palette only means changing the values in `theme.css`.
 
 ## Tests
 
@@ -217,6 +230,7 @@ If a real secret is pushed by mistake, deleting it from the code is not enough: 
 - Code identifiers in English; commit messages and documentation in Portuguese.
 - TypeScript in strict mode.
 - No hardcoded text in components: every interface text comes from the translation files.
+- No hardcoded colors in components: every color comes from the tokens in `src/styles/theme.css`.
 - Linting with TypeScript (type-aware), React Hooks and accessibility (`jsx-a11y`) rules.
 - Automatic formatting with Prettier: no semicolons, single quotes and lines up to 100 characters.
 - LF line endings on every operating system, enforced by `.gitattributes`.
