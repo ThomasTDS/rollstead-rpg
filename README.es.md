@@ -6,6 +6,8 @@
 
 > La sesión se acaba. La historia se queda.
 
+**Sitio:** [rollstead.com.br](https://rollstead.com.br)
+
 Mesa virtual de rol con estética JRPG, creada para campañas centradas en la historia.
 
 Rollstead reúne la mesa, el compendio, el diario de viaje y la mesa de sonido en un solo lugar. Está pensado para grupos que ya juegan por Discord o Google Meet: la voz queda en esas herramientas, y Rollstead se encarga de lo que aparece en pantalla. Funciona en el navegador, sin instalación, y es lo bastante ligero para portátiles básicos y conexiones inestables.
@@ -16,13 +18,14 @@ En desarrollo inicial. Todavía no hay una versión jugable.
 
 ## Tecnologías
 
-| Capa                           | Herramienta                                                                        |
-| ------------------------------ | ---------------------------------------------------------------------------------- |
-| Interfaz                       | [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)        |
-| Build y servidor de desarrollo | [Vite](https://vite.dev/)                                                          |
-| Calidad de código              | [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/)                   |
-| Base de datos y API            | [Supabase](https://supabase.com/) (PostgreSQL), ejecutándose localmente con Docker |
-| Pruebas de base de datos       | [pgTAP](https://pgtap.org/)                                                        |
+| Capa                           | Herramienta                                                                                    |
+| ------------------------------ | ---------------------------------------------------------------------------------------------- |
+| Interfaz                       | [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)                    |
+| Build y servidor de desarrollo | [Vite](https://vite.dev/)                                                                      |
+| Calidad de código              | [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/)                               |
+| Base de datos y API            | [Supabase](https://supabase.com/) (PostgreSQL), ejecutándose localmente con Docker             |
+| Alojamiento                    | [Cloudflare Workers](https://developers.cloudflare.com/workers/static-assets/) (Static Assets) |
+| Pruebas de base de datos       | [pgTAP](https://pgtap.org/)                                                                    |
 
 ## Requisitos previos
 
@@ -91,10 +94,13 @@ rollstead-rpg/
 │   ├── migrations/      # Migraciones de la base de datos, aplicadas en orden
 │   ├── tests/database/  # Pruebas pgTAP
 │   └── seed.sql         # Datos de desarrollo aplicados en db:reset
+├── scripts/
+│   └── smoke-test.sh    # Verificación rápida del sitio publicado
 ├── index.html           # Página base cargada por Vite
 ├── eslint.config.js     # Reglas de lint
 ├── tsconfig*.json       # Configuración de TypeScript
-└── vite.config.ts       # Configuración de Vite
+├── vite.config.ts       # Configuración de Vite
+└── wrangler.jsonc       # Configuración del despliegue en Cloudflare
 ```
 
 ## Base de datos local
@@ -119,6 +125,24 @@ Para comprobar localmente antes de abrir un pull request, con la base local en e
 
 ```bash
 npm run format:check && npm run lint && npm run typecheck && npm run build && npm run test:db
+```
+
+## Despliegue
+
+El despliegue es automático: en cada merge a `main`, después de que `quality` y `database` pasen, GitHub Actions publica el build en [rollstead.com.br](https://rollstead.com.br) mediante Cloudflare Workers.
+
+| Job      | Qué hace                                                                                                |
+| -------- | ------------------------------------------------------------------------------------------------------- |
+| `deploy` | Publica en Cloudflare el mismo build verificado por el job `quality`. Solo se ejecuta en push a `main`. |
+| `smoke`  | Comprueba que el sitio publicado responde y sirve la página de Rollstead.                               |
+
+Las credenciales de Cloudflare (`CLOUDFLARE_API_TOKEN` y `CLOUDFLARE_ACCOUNT_ID`) están solo en los secrets del entorno `production` de GitHub, que únicamente acepta despliegues desde `main`. Ninguna clave queda en el código.
+
+Para comprobar el paquete localmente, sin publicar nada:
+
+```bash
+npm run build
+npx wrangler deploy --dry-run
 ```
 
 ## Convenciones de código

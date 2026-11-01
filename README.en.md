@@ -6,6 +6,8 @@
 
 > Play the session. Keep the story.
 
+**Website:** [rollstead.com.br](https://rollstead.com.br)
+
 A JRPG-inspired virtual tabletop for story-driven campaigns.
 
 Rollstead brings the table, compendium, journey diary and soundboard together in one place. It is designed for groups that already play over Discord or Google Meet: voice stays with those tools, and Rollstead takes care of what shows up on screen. It runs in the browser, with no installation, and is light enough for entry-level laptops and unstable connections.
@@ -16,13 +18,14 @@ Early development. There is no playable version yet.
 
 ## Tech stack
 
-| Layer                | Tool                                                                        |
-| -------------------- | --------------------------------------------------------------------------- |
-| Interface            | [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) |
-| Build and dev server | [Vite](https://vite.dev/)                                                   |
-| Code quality         | [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/)            |
-| Database and API     | [Supabase](https://supabase.com/) (PostgreSQL), running locally via Docker  |
-| Database tests       | [pgTAP](https://pgtap.org/)                                                 |
+| Layer                | Tool                                                                                           |
+| -------------------- | ---------------------------------------------------------------------------------------------- |
+| Interface            | [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)                    |
+| Build and dev server | [Vite](https://vite.dev/)                                                                      |
+| Code quality         | [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/)                               |
+| Database and API     | [Supabase](https://supabase.com/) (PostgreSQL), running locally via Docker                     |
+| Hosting              | [Cloudflare Workers](https://developers.cloudflare.com/workers/static-assets/) (Static Assets) |
+| Database tests       | [pgTAP](https://pgtap.org/)                                                                    |
 
 ## Prerequisites
 
@@ -91,10 +94,13 @@ rollstead-rpg/
 │   ├── migrations/      # Database migrations, applied in order
 │   ├── tests/database/  # pgTAP tests
 │   └── seed.sql         # Development data applied on db:reset
+├── scripts/
+│   └── smoke-test.sh    # Quick check of the published site
 ├── index.html           # Base page loaded by Vite
 ├── eslint.config.js     # Lint rules
 ├── tsconfig*.json       # TypeScript settings
-└── vite.config.ts       # Vite settings
+├── vite.config.ts       # Vite settings
+└── wrangler.jsonc       # Cloudflare deploy settings
 ```
 
 ## Local database
@@ -119,6 +125,24 @@ To check locally before opening a pull request, with the local database running:
 
 ```bash
 npm run format:check && npm run lint && npm run typecheck && npm run build && npm run test:db
+```
+
+## Deployment
+
+Deployment is automatic: on every merge to `main`, after `quality` and `database` pass, GitHub Actions publishes the build to [rollstead.com.br](https://rollstead.com.br) through Cloudflare Workers.
+
+| Job      | What it does                                                                                        |
+| -------- | --------------------------------------------------------------------------------------------------- |
+| `deploy` | Publishes to Cloudflare the same build checked by the `quality` job. Runs only on pushes to `main`. |
+| `smoke`  | Checks that the published site answers and serves the Rollstead page.                               |
+
+The Cloudflare credentials (`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`) live only in the secrets of the GitHub `production` environment, which accepts deployments from `main` only. No key is kept in the code.
+
+To check the bundle locally without publishing anything:
+
+```bash
+npm run build
+npx wrangler deploy --dry-run
 ```
 
 ## Code conventions
