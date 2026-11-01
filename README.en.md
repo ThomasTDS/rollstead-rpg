@@ -94,6 +94,8 @@ rollstead-rpg/
 ├── src/                 # Application source code
 │   ├── App.tsx          # Root component
 │   ├── App.test.tsx     # Component test example
+│   ├── components/      # Reusable components
+│   ├── i18n/            # Languages: setup and translation files (locales/)
 │   ├── lib/             # Pure logic, with each test next to its file (*.test.ts)
 │   ├── test/setup.ts    # Component test setup
 │   └── main.tsx         # Entry point
@@ -123,6 +125,18 @@ The database is never changed by hand: every schema change is a versioned migrat
 - A published migration is never edited; fixes go into a new migration.
 - Every table in the `public` schema must have RLS (Row Level Security) enabled. A test in `supabase/tests/database/rls_enabled.test.sql` fails if any table is created without it.
 - The keys shown by `npm run db:status` are the local Supabase demo keys, identical in every installation. Keys for the real environment never go into the repository.
+
+## Languages
+
+Rollstead ships in Portuguese (default), English and Spanish, with [react-i18next](https://react.i18next.com/).
+
+- Every interface text lives in `src/i18n/locales/<language>/<namespace>.json`. Portuguese (`pt-BR`) is the reference language, and TypeScript checks the keys against it.
+- The language is detected from the browser; unsupported languages fall back to Portuguese. A manual choice is saved in the browser.
+- Only the texts of the active language are downloaded.
+- A test fails if a key exists in one language and is missing in another, or if any text is empty.
+- Lint flags hardcoded text in components (rule `i18next/no-literal-string`).
+
+To add a text: create the key in all three translation files and use `t('key')` in the component.
 
 ## Tests
 
@@ -202,6 +216,7 @@ If a real secret is pushed by mistake, deleting it from the code is not enough: 
 
 - Code identifiers in English; commit messages and documentation in Portuguese.
 - TypeScript in strict mode.
+- No hardcoded text in components: every interface text comes from the translation files.
 - Linting with TypeScript (type-aware), React Hooks and accessibility (`jsx-a11y`) rules.
 - Automatic formatting with Prettier: no semicolons, single quotes and lines up to 100 characters.
 - LF line endings on every operating system, enforced by `.gitattributes`.

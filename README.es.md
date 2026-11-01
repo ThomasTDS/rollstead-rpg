@@ -94,6 +94,8 @@ rollstead-rpg/
 ├── src/                 # Código fuente de la aplicación
 │   ├── App.tsx          # Componente raíz
 │   ├── App.test.tsx     # Ejemplo de prueba de componente
+│   ├── components/      # Componentes reutilizables
+│   ├── i18n/            # Idiomas: configuración y archivos de traducción (locales/)
 │   ├── lib/             # Lógica pura, con la prueba junto a cada archivo (*.test.ts)
 │   ├── test/setup.ts    # Preparación de las pruebas de componentes
 │   └── main.tsx         # Punto de entrada
@@ -123,6 +125,18 @@ La base de datos nunca se modifica a mano: cada cambio de estructura es una migr
 - Una migración ya publicada no se edita; las correcciones van en una migración nueva.
 - Toda tabla del schema `public` debe tener RLS (Row Level Security) activada. Una prueba en `supabase/tests/database/rls_enabled.test.sql` falla si alguna tabla se crea sin ella.
 - Las claves que muestra `npm run db:status` son las claves de demostración del Supabase local, iguales en todas las instalaciones. Las claves del entorno real nunca van al repositorio.
+
+## Idiomas
+
+Rollstead nace en portugués (predeterminado), inglés y español, con [react-i18next](https://react.i18next.com/).
+
+- Todo texto de la interfaz está en `src/i18n/locales/<idioma>/<namespace>.json`. El portugués (`pt-BR`) es el idioma de referencia, y TypeScript verifica las claves a partir de él.
+- El idioma se detecta por el navegador; los idiomas sin soporte pasan al portugués. La elección manual se guarda en el navegador.
+- Solo se descargan los textos del idioma en uso.
+- Una prueba falla si una clave existe en un idioma y falta en otro, o si algún texto está vacío.
+- El lint señala texto fijo en componentes (regla `i18next/no-literal-string`).
+
+Para añadir un texto: crea la clave en los tres archivos de traducción y usa `t('clave')` en el componente.
 
 ## Pruebas
 
@@ -202,6 +216,7 @@ Si se envía un secreto real por error, borrarlo del código no basta: sigue en 
 
 - Identificadores de código en inglés; mensajes de commit y documentación en portugués.
 - TypeScript en modo estricto.
+- Ningún texto fijo en componentes: todo texto de la interfaz viene de los archivos de traducción.
 - Lint con reglas de TypeScript (con verificación de tipos), React Hooks y accesibilidad (`jsx-a11y`).
 - Formato automático con Prettier: sin punto y coma, comillas simples y líneas de hasta 100 caracteres.
 - Saltos de línea LF en todos los sistemas operativos, garantizados por `.gitattributes`.

@@ -1,0 +1,10 @@
+{
+  "app": {
+    "name": "Rollstead",
+    "tagline": "Play the session. Keep the story.",
+    "description": "A JRPG-inspired virtual tabletop for story-driven campaigns."
+  },
+  "language": {
+    "label": "Language"
+  }
+}

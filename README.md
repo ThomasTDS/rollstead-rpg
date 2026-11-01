@@ -94,6 +94,8 @@ rollstead-rpg/
 ├── src/                 # Código-fonte da aplicação
 │   ├── App.tsx          # Componente raiz
 │   ├── App.test.tsx     # Exemplo de teste de componente
+│   ├── components/      # Componentes reutilizáveis
+│   ├── i18n/            # Idiomas: configuração e arquivos de tradução (locales/)
 │   ├── lib/             # Lógica pura, com o teste ao lado de cada arquivo (*.test.ts)
 │   ├── test/setup.ts    # Preparação dos testes de componente
 │   └── main.tsx         # Ponto de entrada
@@ -123,6 +125,18 @@ O banco nunca é alterado à mão: toda mudança de estrutura vira uma migration
 - Uma migration já publicada não é editada; correções viram uma migration nova.
 - Toda tabela do schema `public` precisa de RLS (Row Level Security) ativada. Um teste em `supabase/tests/database/rls_enabled.test.sql` falha se alguma tabela for criada sem ela.
 - As chaves exibidas por `npm run db:status` são as chaves de demonstração do Supabase local, iguais em todas as instalações. As chaves do ambiente real nunca vão para o repositório.
+
+## Idiomas
+
+O Rollstead nasce em português (padrão), inglês e espanhol, com [react-i18next](https://react.i18next.com/).
+
+- Todo texto da interface fica em `src/i18n/locales/<idioma>/<namespace>.json`. O português (`pt-BR`) é o idioma de referência, e as chaves são verificadas pelo TypeScript a partir dele.
+- O idioma é detectado pelo navegador; idiomas sem suporte caem no português. A troca manual fica salva no navegador.
+- Só os textos do idioma em uso são baixados.
+- Um teste falha se uma chave existir em um idioma e faltar em outro, ou se algum texto estiver vazio.
+- O lint acusa texto fixo em componentes (regra `i18next/no-literal-string`).
+
+Para adicionar um texto: crie a chave nos três arquivos de tradução e use `t('chave')` no componente.
 
 ## Testes
 
@@ -202,6 +216,7 @@ Se um segredo real for enviado por engano, apagá-lo do código não basta: ele 
 
 - Identificadores de código em inglês; mensagens de commit e documentação em português.
 - TypeScript em modo estrito.
+- Nenhum texto fixo em componentes: todo texto da interface vem dos arquivos de tradução.
 - Lint com regras de TypeScript (com checagem de tipos), React Hooks e acessibilidade (`jsx-a11y`).
 - Formatação automática com Prettier: sem ponto e vírgula, aspas simples e linhas de até 100 caracteres.
 - Quebras de linha no padrão LF em todos os sistemas operacionais, garantidas pelo `.gitattributes`.

@@ -1,0 +1,10 @@
+{
+  "app": {
+    "name": "Rollstead",
+    "tagline": "La sesión se acaba. La historia se queda.",
+    "description": "Mesa virtual de rol con estética JRPG, creada para campañas centradas en la historia."
+  },
+  "language": {
+    "label": "Idioma"
+  }
+}
