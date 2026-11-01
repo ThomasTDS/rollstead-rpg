@@ -109,7 +109,7 @@ rollstead-rpg/
 │       └── fixtures.ts  # Fixtures que entregam os Page Objects aos testes
 ├── index.html           # Página base carregada pelo Vite
 ├── eslint.config.js     # Regras de lint
-├── playwright.config.ts # Configuração do Playwright
+├── playwright*.ts       # Configurações do Playwright (E2E e API)
 ├── tsconfig*.json       # Configurações do TypeScript
 ├── vite.config.ts       # Configuração do Vite
 └── wrangler.jsonc       # Configuração do deploy no Cloudflare

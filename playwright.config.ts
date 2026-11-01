@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
 
+// E2E tests. API tests have their own config (playwright.api.config.ts) because they
+// do not need the local preview server started below.
 const isCI = Boolean(process.env.CI)
 
 // When set, E2E tests run against an already published site (smoke test) instead of a local preview.
@@ -7,7 +9,7 @@ const externalBaseURL = process.env.PLAYWRIGHT_BASE_URL
 const previewURL = 'http://localhost:4173'
 
 export default defineConfig({
-  testDir: './tests',
+  testDir: './tests/e2e',
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
@@ -21,12 +23,7 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'api',
-      testDir: './tests/api',
-    },
-    {
       name: 'chromium',
-      testDir: './tests/e2e',
       use: {
         ...devices['Desktop Chrome'],
         baseURL: externalBaseURL ?? previewURL,

@@ -20,9 +20,9 @@
     "db:status": "supabase status",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:api": "playwright test --project=api",
-    "test:e2e": "playwright test --project=chromium",
-    "test:smoke": "playwright test --project=chromium --grep @smoke",
+    "test:api": "playwright test -c playwright.api.config.ts",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
     "test:db": "supabase test db"
   },
   "dependencies": {
