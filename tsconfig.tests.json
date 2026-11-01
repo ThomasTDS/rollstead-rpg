@@ -9,6 +9,7 @@
     /* Playwright transpiles the tests itself */
     "module": "esnext",
     "moduleResolution": "bundler",
+    "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noEmit": true,
