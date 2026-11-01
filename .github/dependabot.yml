@@ -11,6 +11,18 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: 'deps'
+    # Major versions held back on purpose (see DEC-007): typescript-eslint supports
+    # TypeScript < 6.1 (so typescript stays on 6.0.x), jsx-a11y does not support ESLint 10, and @types/node follows
+    # the Node major in .nvmrc. Security updates are not affected by these rules.
+    ignore:
+      - dependency-name: typescript
+        update-types: [version-update:semver-major, version-update:semver-minor]
+      - dependency-name: eslint
+        update-types: [version-update:semver-major]
+      - dependency-name: '@eslint/js'
+        update-types: [version-update:semver-major]
+      - dependency-name: '@types/node'
+        update-types: [version-update:semver-major]
     groups:
       npm-minor-and-patch:
         update-types: [minor, patch]
