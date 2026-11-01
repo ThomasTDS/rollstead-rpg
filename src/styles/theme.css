@@ -1,0 +1,53 @@
+/*
+ * Theme tokens: the ONLY place in the app where color values are written.
+ * Components use the semantic Tailwind classes generated from these tokens
+ * (bg-background, text-foreground, bg-window...). A test fails if a color
+ * value appears anywhere else.
+ *
+ * Each token holds light-dark(<light value>, <dark value>). The active theme
+ * follows the system preference; data-theme="light" | "dark" on <html> forces one
+ * (manual switch comes in NT-60).
+ *
+ * Provisional JRPG-inspired palette until the final design: parchment by day,
+ * starry night by night, deep blue menu windows and gold highlights.
+ */
+@import 'tailwindcss';
+
+@theme {
+  /* Drop Tailwind's default palette: only the tokens below exist as colors. */
+  --color-*: initial;
+
+  --color-background: light-dark(#f4ecd8, #0f1220);
+  --color-foreground: light-dark(#2b2118, #e8e4d8);
+  --color-muted: light-dark(#6b5a45, #a9a3b8);
+  --color-border: light-dark(#c9b48a, #3a4270);
+  --color-accent: light-dark(#9a6416, #e0b04a);
+
+  /* JRPG menu window */
+  --color-window: light-dark(#1f3a8a, #1b2a6b);
+  --color-window-foreground: light-dark(#f8f5ec, #f8f5ec);
+  --color-window-border: light-dark(#e8dcc0, #c9cfe8);
+  --color-window-accent: light-dark(#e0b04a, #e0b04a);
+}
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+  }
+
+  :root[data-theme='light'] {
+    color-scheme: light;
+  }
+
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply min-h-dvh bg-background text-foreground antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+}

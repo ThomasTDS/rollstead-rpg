@@ -22,6 +22,7 @@ En desarrollo inicial. Todavía no hay una versión jugable.
 | ------------------------------ | ---------------------------------------------------------------------------------------------- |
 | Interfaz                       | [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)                    |
 | Build y servidor de desarrollo | [Vite](https://vite.dev/)                                                                      |
+| Estilo                         | [Tailwind CSS](https://tailwindcss.com/) con tokens de tema en variables CSS                   |
 | Calidad de código              | [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/)                               |
 | Base de datos y API            | [Supabase](https://supabase.com/) (PostgreSQL), ejecutándose localmente con Docker             |
 | Alojamiento                    | [Cloudflare Workers](https://developers.cloudflare.com/workers/static-assets/) (Static Assets) |
@@ -97,6 +98,7 @@ rollstead-rpg/
 │   ├── components/      # Componentes reutilizables
 │   ├── i18n/            # Idiomas: configuración y archivos de traducción (locales/)
 │   ├── lib/             # Lógica pura, con la prueba junto a cada archivo (*.test.ts)
+│   ├── styles/          # Tema: tokens de color (theme.css), únicos con valores de color
 │   ├── test/setup.ts    # Preparación de las pruebas de componentes
 │   └── main.tsx         # Punto de entrada
 ├── supabase/
@@ -137,6 +139,17 @@ Rollstead nace en portugués (predeterminado), inglés y español, con [react-i1
 - El lint señala texto fijo en componentes (regla `i18next/no-literal-string`).
 
 Para añadir un texto: crea la clave en los tres archivos de traducción y usa `t('clave')` en el componente.
+
+## Tema y colores
+
+Los colores están solo en `src/styles/theme.css`, como tokens con un valor para el tema claro y otro para el oscuro (`light-dark()`). Los componentes usan las clases de Tailwind generadas a partir de ellos, como `bg-background`, `text-foreground` y `bg-window`, nunca un valor de color.
+
+- La paleta predeterminada de Tailwind está desactivada: clases como `bg-red-500` no existen.
+- El tema sigue la preferencia del sistema. `data-theme="light"` o `data-theme="dark"` en el `<html>` fuerza uno de ellos.
+- Una prueba revisa el código y falla si encuentra un color fijo fuera de `theme.css` (hexadecimal, `rgb()`, `hsl()` y similares, o la paleta de Tailwind).
+- Otra prueba verifica el contraste de los pares de colores en los dos temas según WCAG: 4,5:1 para texto y 3:1 para elementos de interfaz.
+
+La paleta actual es provisional e inspirada en JRPG (pergamino de día, noche estrellada de noche, ventanas azules y detalles dorados). Cambiar la paleta es solo cambiar los valores en `theme.css`.
 
 ## Pruebas
 
@@ -217,6 +230,7 @@ Si se envía un secreto real por error, borrarlo del código no basta: sigue en 
 - Identificadores de código en inglés; mensajes de commit y documentación en portugués.
 - TypeScript en modo estricto.
 - Ningún texto fijo en componentes: todo texto de la interfaz viene de los archivos de traducción.
+- Ningún color fijo en componentes: todo color viene de los tokens de `src/styles/theme.css`.
 - Lint con reglas de TypeScript (con verificación de tipos), React Hooks y accesibilidad (`jsx-a11y`).
 - Formato automático con Prettier: sin punto y coma, comillas simples y líneas de hasta 100 caracteres.
 - Saltos de línea LF en todos los sistemas operativos, garantizados por `.gitattributes`.
