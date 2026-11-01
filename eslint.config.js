@@ -7,16 +7,13 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
-  { ignores: ['dist', 'coverage'] },
+  { ignores: ['dist', 'coverage', 'playwright-report', 'test-results', 'blob-report'] },
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
       js.configs.recommended,
       tseslint.configs.strictTypeChecked,
       tseslint.configs.stylisticTypeChecked,
-      reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
-      jsxA11y.flatConfigs.recommended,
     ],
     languageOptions: {
       ecmaVersion: 2023,
@@ -26,6 +23,19 @@ export default tseslint.config(
         tsconfigRootDir: import.meta.dirname,
       },
     },
+  },
+  {
+    // React rules only where React lives; Playwright fixtures also call a function named `use`
+    files: ['src/**/*.{ts,tsx}'],
+    extends: [
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+      jsxA11y.flatConfigs.recommended,
+    ],
+  },
+  {
+    files: ['tests/**/*.ts', 'playwright*.config.ts'],
+    languageOptions: { globals: globals.node },
   },
   {
     files: ['**/*.js'],
