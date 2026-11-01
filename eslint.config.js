@@ -4,6 +4,7 @@ import jsxA11y from 'eslint-plugin-jsx-a11y'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import globals from 'globals'
+import i18next from 'eslint-plugin-i18next'
 import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
@@ -32,6 +33,37 @@ export default tseslint.config(
       reactRefresh.configs.vite,
       jsxA11y.flatConfigs.recommended,
     ],
+  },
+  {
+    // Every user-facing text must come from the translation files (src/i18n/locales)
+    files: ['src/**/*.tsx'],
+    ignores: ['src/**/*.test.tsx'],
+    extends: [i18next.configs['flat/recommended']],
+    rules: {
+      'i18next/no-literal-string': [
+        'error',
+        {
+          mode: 'jsx-only',
+          'jsx-attributes': {
+            exclude: [
+              'className',
+              'style',
+              'type',
+              'key',
+              'id',
+              'htmlFor',
+              'lang',
+              'value',
+              'role',
+              'href',
+              'src',
+              'name',
+              'data-testid',
+            ],
+          },
+        },
+      ],
+    },
   },
   {
     files: ['tests/**/*.ts', 'playwright*.config.ts'],

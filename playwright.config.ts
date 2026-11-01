@@ -26,6 +26,7 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        locale: 'pt-BR',
         baseURL: externalBaseURL ?? previewURL,
       },
     },
