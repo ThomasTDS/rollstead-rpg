@@ -67,20 +67,25 @@ Early development. There is no playable version yet.
 
 ## Available scripts
 
-| Command                | What it does                                                                       |
-| ---------------------- | ---------------------------------------------------------------------------------- |
-| `npm run dev`          | Starts the development server with hot reload.                                     |
-| `npm run build`        | Type-checks and builds the production version into `dist/`.                        |
-| `npm run preview`      | Serves the output of `build` locally.                                              |
-| `npm run lint`         | Runs ESLint. Fails on any error or warning.                                        |
-| `npm run typecheck`    | Type-checks with TypeScript without emitting files.                                |
-| `npm run format`       | Formats every file with Prettier.                                                  |
-| `npm run format:check` | Checks formatting without changing files.                                          |
-| `npm run db:start`     | Starts the local Supabase in Docker and applies the migrations.                    |
-| `npm run db:stop`      | Stops the local Supabase containers, keeping the data.                             |
-| `npm run db:reset`     | Rebuilds the local database from scratch, applying every migration and `seed.sql`. |
-| `npm run db:status`    | Shows the local environment addresses and keys.                                    |
-| `npm run test:db`      | Runs the pgTAP database tests (requires the local database to be running).         |
+| Command                | What it does                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------- |
+| `npm run dev`          | Starts the development server with hot reload.                                                          |
+| `npm run build`        | Type-checks and builds the production version into `dist/`.                                             |
+| `npm run preview`      | Serves the output of `build` locally.                                                                   |
+| `npm run lint`         | Runs ESLint. Fails on any error or warning.                                                             |
+| `npm run typecheck`    | Type-checks with TypeScript without emitting files.                                                     |
+| `npm run format`       | Formats every file with Prettier.                                                                       |
+| `npm run format:check` | Checks formatting without changing files.                                                               |
+| `npm run db:start`     | Starts the local Supabase in Docker and applies the migrations.                                         |
+| `npm run db:stop`      | Stops the local Supabase containers, keeping the data.                                                  |
+| `npm run db:reset`     | Rebuilds the local database from scratch, applying every migration and `seed.sql`.                      |
+| `npm run db:status`    | Shows the local environment addresses and keys.                                                         |
+| `npm run test:db`      | Runs the pgTAP database tests (requires the local database to be running).                              |
+| `npm test`             | Runs the unit and component tests (Vitest).                                                             |
+| `npm run test:watch`   | Runs Vitest in watch mode, rerunning tests on every change.                                             |
+| `npm run test:api`     | Runs the API tests (Playwright) against the local Supabase (requires the local Supabase to be running). |
+| `npm run test:e2e`     | Runs the E2E tests (Playwright) in Chromium against the local build (run `npm run build` first).        |
+| `npm run test:smoke`   | Runs only the tests tagged `@smoke`; with `PLAYWRIGHT_BASE_URL`, targets a published site.              |
 
 ## Project structure
 
@@ -88,16 +93,23 @@ Early development. There is no playable version yet.
 rollstead-rpg/
 ├── src/                 # Application source code
 │   ├── App.tsx          # Root component
+│   ├── App.test.tsx     # Component test example
+│   ├── lib/             # Pure logic, with each test next to its file (*.test.ts)
+│   ├── test/setup.ts    # Component test setup
 │   └── main.tsx         # Entry point
 ├── supabase/
 │   ├── config.toml      # Local Supabase settings
 │   ├── migrations/      # Database migrations, applied in order
 │   ├── tests/database/  # pgTAP tests
 │   └── seed.sql         # Development data applied on db:reset
-├── scripts/
-│   └── smoke-test.sh    # Quick check of the published site
+├── tests/               # Playwright tests
+│   ├── api/             # API tests (contract checked with Zod)
+│   └── e2e/             # E2E tests
+│       ├── pages/       # Page Objects (POM)
+│       └── fixtures.ts  # Fixtures that hand the Page Objects to the tests
 ├── index.html           # Base page loaded by Vite
 ├── eslint.config.js     # Lint rules
+├── playwright.config.ts # Playwright settings
 ├── tsconfig*.json       # TypeScript settings
 ├── vite.config.ts       # Vite settings
 └── wrangler.jsonc       # Cloudflare deploy settings
@@ -112,6 +124,31 @@ The database is never changed by hand: every schema change is a versioned migrat
 - Every table in the `public` schema must have RLS (Row Level Security) enabled. A test in `supabase/tests/database/rls_enabled.test.sql` fails if any table is created without it.
 - The keys shown by `npm run db:status` are the local Supabase demo keys, identical in every installation. Keys for the real environment never go into the repository.
 
+## Tests
+
+The project test pyramid, from the fastest and most numerous to the slowest and most selective:
+
+| Level                    | Tool                                                                      | Location                                   | Current example                                                      |
+| ------------------------ | ------------------------------------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------- |
+| Unit                     | [Vitest](https://vitest.dev/)                                             | Next to the code, `src/**/*.test.ts`       | `src/lib/dice.test.ts` (dice notation, such as `2d6+3`)              |
+| Component                | Vitest + [Testing Library](https://testing-library.com/)                  | Next to the component, `src/**/*.test.tsx` | `src/App.test.tsx`                                                   |
+| Database and permissions | pgTAP                                                                     | `supabase/tests/database/`                 | `health_check` RLS policies                                          |
+| API                      | [Playwright](https://playwright.dev/) (request) + [Zod](https://zod.dev/) | `tests/api/`                               | Contract and permissions of `/rest/v1/health_check`                  |
+| E2E                      | Playwright with Page Objects                                              | `tests/e2e/`                               | Home page; the same test, tagged `@smoke`, checks the published site |
+
+Conventions:
+
+- Unit tests run in the Node environment; component tests (`.test.tsx`) run in jsdom.
+- E2E tests never use loose selectors: each screen has a Page Object in `tests/e2e/pages/`, handed to the tests by the fixtures in `tests/e2e/fixtures.ts`.
+- API tests use only the Supabase public (anon) key, read automatically from the local Supabase.
+- For now E2E runs in Chromium only; Firefox and WebKit join before the beta.
+
+The first time, install the browser used by Playwright:
+
+```bash
+npx playwright install chromium
+```
+
 ## Continuous integration
 
 Every pull request and every push to `main` runs on GitHub Actions (`.github/workflows/ci.yml`). A pull request can only be merged when all of these jobs pass:
@@ -120,23 +157,26 @@ Every pull request and every push to `main` runs on GitHub Actions (`.github/wor
 | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | `quality`                                               | Formatting, lint, types and production build.                                                                           |
 | `database`                                              | Starts the local Supabase database from the migrations and runs the pgTAP tests.                                        |
+| `unit`                                                  | Unit and component tests (Vitest).                                                                                      |
+| `api`                                                   | Starts the local Supabase API and runs the API tests (Playwright).                                                      |
+| `e2e`                                                   | Runs the E2E tests (Playwright, Chromium) against the same build produced by the `quality` job.                         |
 | `secrets`                                               | Scans the whole Git history for passwords and tokens with [Gitleaks](https://github.com/gitleaks/gitleaks).             |
 | `codeql (javascript-typescript)` and `codeql (actions)` | Security analysis of the code and workflows with [CodeQL](https://codeql.github.com/) (`.github/workflows/codeql.yml`). |
 
-To check locally before opening a pull request, with the local database running:
+To check locally before opening a pull request, with the local Supabase running:
 
 ```bash
-npm run format:check && npm run lint && npm run typecheck && npm run build && npm run test:db
+npm run format:check && npm run lint && npm run typecheck && npm run build && npm test && npm run test:db && npm run test:api && npm run test:e2e
 ```
 
 ## Deployment
 
-Deployment is automatic: on every merge to `main`, after `quality`, `database` and `secrets` pass, GitHub Actions publishes the build to [rollstead.com.br](https://rollstead.com.br) through Cloudflare Workers.
+Deployment is automatic: on every merge to `main`, after every check job passes, GitHub Actions publishes the build to [rollstead.com.br](https://rollstead.com.br) through Cloudflare Workers.
 
 | Job      | What it does                                                                                        |
 | -------- | --------------------------------------------------------------------------------------------------- |
 | `deploy` | Publishes to Cloudflare the same build checked by the `quality` job. Runs only on pushes to `main`. |
-| `smoke`  | Checks that the published site answers and serves the Rollstead page.                               |
+| `smoke`  | Opens the published site in Chromium and runs the E2E tests tagged `@smoke`.                        |
 
 The Cloudflare credentials (`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`) live only in the secrets of the GitHub `production` environment, which accepts deployments from `main` only. No key is kept in the code.
 
