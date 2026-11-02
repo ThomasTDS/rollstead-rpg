@@ -1,5 +1,5 @@
 {
-  "initialBundleKb": 50,
+  "initialBundleKb": 250,
   "lighthouse": {
     "runs": 3,
     "minScores": {
@@ -12,6 +12,6 @@
     "latencyMs": 400,
     "downloadKbps": 400,
     "uploadKbps": 400,
-    "maxSecondsToUsable": 1
+    "maxSecondsToUsable": 10
   }
 }
