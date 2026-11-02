@@ -203,14 +203,15 @@ npm run format:check && npm run lint && npm run typecheck && npm run build && np
 
 ## Deploy
 
-O deploy é automático: a cada merge na `main`, depois que todos os jobs de verificação passam, o GitHub Actions publica o build em [rollstead.com.br](https://rollstead.com.br) pelo Cloudflare Workers.
+O deploy é automático: a cada merge na `main`, depois que todos os jobs de verificação passam, o GitHub Actions aplica as migrations novas no banco do Supabase na nuvem e publica o build em [rollstead.com.br](https://rollstead.com.br) pelo Cloudflare Workers.
 
-| Job      | O que faz                                                                                     |
-| -------- | --------------------------------------------------------------------------------------------- |
-| `deploy` | Publica no Cloudflare o mesmo build verificado pelo job `quality`. Roda só em push na `main`. |
-| `smoke`  | Abre o site publicado no Chromium e roda os testes E2E marcados com `@smoke`.                 |
+| Job       | O que faz                                                                                                                                                   |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `migrate` | Aplica no banco de produção (Supabase) as migrations que ainda não foram aplicadas. Nunca envia o `seed.sql`. Roda só em push na `main`, antes do `deploy`. |
+| `deploy`  | Publica no Cloudflare o mesmo build verificado pelo job `quality`. Roda só em push na `main`.                                                               |
+| `smoke`   | Abre o site publicado no Chromium e roda os testes E2E marcados com `@smoke`.                                                                               |
 
-As credenciais do Cloudflare (`CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID`) ficam apenas nos secrets do ambiente `production` do GitHub, que só aceita deploys vindos da `main`. Nenhuma chave fica no código.
+As credenciais do Cloudflare (`CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID`) e do Supabase (`SUPABASE_ACCESS_TOKEN` e `SUPABASE_DB_PASSWORD`) ficam apenas nos secrets do ambiente `production` do GitHub, que só aceita deploys vindos da `main`. Nenhuma chave fica no código.
 
 Para testar o empacotamento localmente, sem publicar nada:
 
@@ -218,6 +219,15 @@ Para testar o empacotamento localmente, sem publicar nada:
 npm run build
 npx wrangler deploy --dry-run
 ```
+
+## Banco em produção e keep-alive
+
+O banco de produção é um projeto Supabase gratuito na região de São Paulo. Projetos gratuitos são pausados depois de 7 dias sem atividade, então o workflow `.github/workflows/keep-alive.yml` faz uma leitura leve na tabela `health_check` a cada 3 dias.
+
+- Usa só a chave pública (`SUPABASE_PUBLISHABLE_KEY`, secret do repositório), nunca uma chave de serviço.
+- Se a leitura falhar, o GitHub envia um e-mail de falha do workflow.
+- Pode ser rodado à mão na aba **Actions** → **Keep-alive** → **Run workflow**.
+- O GitHub desliga agendamentos de repositórios públicos depois de 60 dias sem atividade. A cada 2 meses, confira se o workflow continua ativo na aba **Actions**.
 
 ## Orçamento de performance
 
