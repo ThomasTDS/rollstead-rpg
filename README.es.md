@@ -205,13 +205,15 @@ npm run format:check && npm run lint && npm run typecheck && npm run build && np
 
 El despliegue es automático: en cada merge a `main`, después de que pasen todos los jobs de verificación, GitHub Actions aplica las migraciones nuevas en la base de datos de Supabase en la nube y publica el build en [rollstead.com.br](https://rollstead.com.br) mediante Cloudflare Workers.
 
-| Job       | Qué hace                                                                                                                                                                     |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `migrate` | Aplica en la base de datos de producción (Supabase) las migraciones que aún no se aplicaron. Nunca envía el `seed.sql`. Solo se ejecuta en push a `main`, antes de `deploy`. |
-| `deploy`  | Publica en Cloudflare el mismo build verificado por el job `quality`. Solo se ejecuta en push a `main`.                                                                      |
-| `smoke`   | Abre el sitio publicado en Chromium y ejecuta las pruebas E2E marcadas con `@smoke`.                                                                                         |
+| Job       | Qué hace                                                                                                                                                                                        |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `migrate` | Aplica en la base de datos de producción (Supabase) las migraciones que aún no se aplicaron. Nunca envía el `seed.sql`. Solo se ejecuta en `main` (push o ejecución manual), antes de `deploy`. |
+| `deploy`  | Publica en Cloudflare el mismo build verificado por el job `quality`. Solo se ejecuta en `main` (push o ejecución manual).                                                                      |
+| `smoke`   | Abre el sitio publicado en Chromium y ejecuta las pruebas E2E marcadas con `@smoke`.                                                                                                            |
 
 Las credenciales de Cloudflare (`CLOUDFLARE_API_TOKEN` y `CLOUDFLARE_ACCOUNT_ID`) y de Supabase (`SUPABASE_ACCESS_TOKEN` y `SUPABASE_DB_PASSWORD`) están solo en los secrets del entorno `production` de GitHub, que únicamente acepta despliegues desde `main`. Ninguna clave queda en el código.
+
+Si GitHub no inicia el pipeline después de un merge, se puede ejecutar a mano en la pestaña **Actions** → **CI** → **Run workflow** (rama `main`). Todas las pruebas se ejecutan de nuevo antes del despliegue.
 
 Para comprobar el paquete localmente, sin publicar nada:
 

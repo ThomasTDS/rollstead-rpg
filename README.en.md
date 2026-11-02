@@ -205,13 +205,15 @@ npm run format:check && npm run lint && npm run typecheck && npm run build && np
 
 Deployment is automatic: on every merge to `main`, after every check job passes, GitHub Actions applies the new migrations to the Supabase cloud database and publishes the build to [rollstead.com.br](https://rollstead.com.br) through Cloudflare Workers.
 
-| Job       | What it does                                                                                                                                          |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `migrate` | Applies to the production database (Supabase) the migrations not applied yet. Never sends `seed.sql`. Runs only on pushes to `main`, before `deploy`. |
-| `deploy`  | Publishes to Cloudflare the same build checked by the `quality` job. Runs only on pushes to `main`.                                                   |
-| `smoke`   | Opens the published site in Chromium and runs the E2E tests tagged `@smoke`.                                                                          |
+| Job       | What it does                                                                                                                                                     |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `migrate` | Applies to the production database (Supabase) the migrations not applied yet. Never sends `seed.sql`. Runs only on `main` (push or manual run), before `deploy`. |
+| `deploy`  | Publishes to Cloudflare the same build checked by the `quality` job. Runs only on `main` (push or manual run).                                                   |
+| `smoke`   | Opens the published site in Chromium and runs the E2E tests tagged `@smoke`.                                                                                     |
 
 The Cloudflare credentials (`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`) and the Supabase ones (`SUPABASE_ACCESS_TOKEN` and `SUPABASE_DB_PASSWORD`) live only in the secrets of the GitHub `production` environment, which accepts deployments from `main` only. No key is kept in the code.
+
+If GitHub does not start the pipeline after a merge, it can be run by hand from the **Actions** tab → **CI** → **Run workflow** (branch `main`). Every test runs again before deployment.
 
 To check the bundle locally without publishing anything:
 
