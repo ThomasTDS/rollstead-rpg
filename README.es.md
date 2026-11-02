@@ -203,14 +203,15 @@ npm run format:check && npm run lint && npm run typecheck && npm run build && np
 
 ## Despliegue
 
-El despliegue es automático: en cada merge a `main`, después de que pasen todos los jobs de verificación, GitHub Actions publica el build en [rollstead.com.br](https://rollstead.com.br) mediante Cloudflare Workers.
+El despliegue es automático: en cada merge a `main`, después de que pasen todos los jobs de verificación, GitHub Actions aplica las migraciones nuevas en la base de datos de Supabase en la nube y publica el build en [rollstead.com.br](https://rollstead.com.br) mediante Cloudflare Workers.
 
-| Job      | Qué hace                                                                                                |
-| -------- | ------------------------------------------------------------------------------------------------------- |
-| `deploy` | Publica en Cloudflare el mismo build verificado por el job `quality`. Solo se ejecuta en push a `main`. |
-| `smoke`  | Abre el sitio publicado en Chromium y ejecuta las pruebas E2E marcadas con `@smoke`.                    |
+| Job       | Qué hace                                                                                                                                                                     |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `migrate` | Aplica en la base de datos de producción (Supabase) las migraciones que aún no se aplicaron. Nunca envía el `seed.sql`. Solo se ejecuta en push a `main`, antes de `deploy`. |
+| `deploy`  | Publica en Cloudflare el mismo build verificado por el job `quality`. Solo se ejecuta en push a `main`.                                                                      |
+| `smoke`   | Abre el sitio publicado en Chromium y ejecuta las pruebas E2E marcadas con `@smoke`.                                                                                         |
 
-Las credenciales de Cloudflare (`CLOUDFLARE_API_TOKEN` y `CLOUDFLARE_ACCOUNT_ID`) están solo en los secrets del entorno `production` de GitHub, que únicamente acepta despliegues desde `main`. Ninguna clave queda en el código.
+Las credenciales de Cloudflare (`CLOUDFLARE_API_TOKEN` y `CLOUDFLARE_ACCOUNT_ID`) y de Supabase (`SUPABASE_ACCESS_TOKEN` y `SUPABASE_DB_PASSWORD`) están solo en los secrets del entorno `production` de GitHub, que únicamente acepta despliegues desde `main`. Ninguna clave queda en el código.
 
 Para comprobar el paquete localmente, sin publicar nada:
 
@@ -218,6 +219,15 @@ Para comprobar el paquete localmente, sin publicar nada:
 npm run build
 npx wrangler deploy --dry-run
 ```
+
+## Base de datos en producción y keep-alive
+
+La base de datos de producción es un proyecto gratuito de Supabase en la región de São Paulo. Los proyectos gratuitos se pausan tras 7 días sin actividad, así que el workflow `.github/workflows/keep-alive.yml` hace una lectura ligera en la tabla `health_check` cada 3 días.
+
+- Usa solo la clave pública (`SUPABASE_PUBLISHABLE_KEY`, secret del repositorio), nunca una clave de servicio.
+- Si la lectura falla, GitHub envía un correo de fallo del workflow.
+- Se puede ejecutar a mano en la pestaña **Actions** → **Keep-alive** → **Run workflow**.
+- GitHub desactiva las programaciones de repositorios públicos tras 60 días sin actividad. Cada 2 meses, comprueba en la pestaña **Actions** que el workflow sigue activo.
 
 ## Presupuesto de rendimiento
 

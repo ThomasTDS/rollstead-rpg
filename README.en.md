@@ -203,14 +203,15 @@ npm run format:check && npm run lint && npm run typecheck && npm run build && np
 
 ## Deployment
 
-Deployment is automatic: on every merge to `main`, after every check job passes, GitHub Actions publishes the build to [rollstead.com.br](https://rollstead.com.br) through Cloudflare Workers.
+Deployment is automatic: on every merge to `main`, after every check job passes, GitHub Actions applies the new migrations to the Supabase cloud database and publishes the build to [rollstead.com.br](https://rollstead.com.br) through Cloudflare Workers.
 
-| Job      | What it does                                                                                        |
-| -------- | --------------------------------------------------------------------------------------------------- |
-| `deploy` | Publishes to Cloudflare the same build checked by the `quality` job. Runs only on pushes to `main`. |
-| `smoke`  | Opens the published site in Chromium and runs the E2E tests tagged `@smoke`.                        |
+| Job       | What it does                                                                                                                                          |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `migrate` | Applies to the production database (Supabase) the migrations not applied yet. Never sends `seed.sql`. Runs only on pushes to `main`, before `deploy`. |
+| `deploy`  | Publishes to Cloudflare the same build checked by the `quality` job. Runs only on pushes to `main`.                                                   |
+| `smoke`   | Opens the published site in Chromium and runs the E2E tests tagged `@smoke`.                                                                          |
 
-The Cloudflare credentials (`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`) live only in the secrets of the GitHub `production` environment, which accepts deployments from `main` only. No key is kept in the code.
+The Cloudflare credentials (`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`) and the Supabase ones (`SUPABASE_ACCESS_TOKEN` and `SUPABASE_DB_PASSWORD`) live only in the secrets of the GitHub `production` environment, which accepts deployments from `main` only. No key is kept in the code.
 
 To check the bundle locally without publishing anything:
 
@@ -218,6 +219,15 @@ To check the bundle locally without publishing anything:
 npm run build
 npx wrangler deploy --dry-run
 ```
+
+## Production database and keep-alive
+
+The production database is a free Supabase project in the São Paulo region. Free projects pause after 7 days without activity, so the `.github/workflows/keep-alive.yml` workflow makes a light read on the `health_check` table every 3 days.
+
+- It uses only the public key (`SUPABASE_PUBLISHABLE_KEY`, a repository secret), never a service key.
+- If the read fails, GitHub sends a workflow failure email.
+- It can be run by hand from the **Actions** tab → **Keep-alive** → **Run workflow**.
+- GitHub disables schedules in public repositories after 60 days without activity. Every 2 months, check in the **Actions** tab that the workflow is still enabled.
 
 ## Performance budget
 

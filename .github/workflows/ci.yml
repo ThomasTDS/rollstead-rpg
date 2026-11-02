@@ -221,9 +221,43 @@ jobs:
       - name: Scan git history for secrets
         run: '"$RUNNER_TEMP/gitleaks" git . --redact --no-banner --verbose'
 
+  migrate:
+    name: migrate
+    needs: [quality, database, unit, api, e2e, performance, secrets]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: production
+    concurrency:
+      group: migrate-production
+      cancel-in-progress: false
+    env:
+      SUPABASE_PROJECT_REF: fejcdlmlivtztftrxyzu
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Link the production project
+        run: npx supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+      # Applies only migrations not yet recorded in production; seed.sql is never sent
+      - name: Apply database migrations
+        run: npx supabase db push --linked
+
   deploy:
     name: deploy
-    needs: [quality, database, unit, api, e2e, performance, secrets]
+    needs: [quality, database, unit, api, e2e, performance, secrets, migrate]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
