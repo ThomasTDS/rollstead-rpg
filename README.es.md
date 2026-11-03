@@ -222,14 +222,40 @@ npm run build
 npx wrangler deploy --dry-run
 ```
 
+## Entorno de pruebas (previews)
+
+Cada pull request recibe una dirección propia para revisarla a mano antes del merge, publicada por el workflow `.github/workflows/preview.yml`:
+
+1. El job `preview` espera la aprobación del responsable (entorno `staging` de GitHub, con revisor obligatorio).
+2. Recrea desde cero la base de datos de staging (un segundo proyecto gratuito de Supabase, también en São Paulo) con las migraciones y el `seed.sql` del pull request.
+3. Genera el build y lo publica como un [Preview de Cloudflare Workers](https://developers.cloudflare.com/workers/previews/), en `pr-<número>-rollstead.rollstead.workers.dev`.
+4. Comenta la dirección en el pull request y ejecuta las pruebas `@smoke` sobre ella.
+
+Los previews comparten la misma base de datos de staging, así que se ejecutan de uno en uno. Los pull requests de forks y de Dependabot no generan preview, porque no reciben las claves de staging. El preview no es una verificación obligatoria del merge.
+
+Las credenciales de staging (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `SUPABASE_ACCESS_TOKEN` y `SUPABASE_DB_PASSWORD`) están en los secrets del entorno `staging`, separadas de las de producción.
+
 ## Base de datos en producción y keep-alive
 
-La base de datos de producción es un proyecto gratuito de Supabase en la región de São Paulo. Los proyectos gratuitos se pausan tras 7 días sin actividad, así que el workflow `.github/workflows/keep-alive.yml` hace una lectura ligera en la tabla `health_check` cada 3 días.
+La base de datos de producción es un proyecto gratuito de Supabase en la región de São Paulo. Los proyectos gratuitos se pausan tras 7 días sin actividad, así que el workflow `.github/workflows/keep-alive.yml` hace una lectura ligera en la tabla `health_check` de las dos bases de datos (producción y staging) cada 3 días.
 
-- Usa solo la clave pública (`SUPABASE_PUBLISHABLE_KEY`, secret del repositorio), nunca una clave de servicio.
+- Usa solo las claves públicas (`SUPABASE_PUBLISHABLE_KEY` y `SUPABASE_STAGING_PUBLISHABLE_KEY`, secrets del repositorio), nunca una clave de servicio.
 - Si la lectura falla, GitHub envía un correo de fallo del workflow.
 - Se puede ejecutar a mano en la pestaña **Actions** → **Keep-alive** → **Run workflow**.
 - GitHub desactiva las programaciones de repositorios públicos tras 60 días sin actividad. Cada 2 meses, comprueba en la pestaña **Actions** que el workflow sigue activo.
+
+## Verificación de credenciales
+
+El workflow `.github/workflows/credentials-check.yml` comprueba que cada clave externa sigue funcionando, sin publicar ni cambiar nada:
+
+| Verificación                   | Cómo                                                                         |
+| ------------------------------ | ---------------------------------------------------------------------------- |
+| Token de Cloudflare            | Lista los despliegues del Worker (`wrangler deployments list`).              |
+| Token de Supabase              | Consulta el proyecto en la API de gestión y comprueba la región `sa-east-1`. |
+| Contraseña de la base de datos | Se conecta y simula las migraciones (`supabase db push --dry-run`).          |
+| Clave pública                  | Lee la tabla `health_check`.                                                 |
+
+Se ejecuta todos los lunes para producción. Para staging, solo a mano (pestaña **Actions** → **Credentials check** → **Run workflow**), porque cada uso del entorno `staging` espera aprobación. Debe ejecutarse antes del merge de cualquier pull request que dependa de configuración externa nueva.
 
 ## Presupuesto de rendimiento
 
@@ -247,12 +273,12 @@ Lighthouse usa el Google Chrome instalado o, si no lo hay, el Chromium de Playwr
 
 ## Seguridad
 
-| Protección                   | Qué hace                                                                                                                                         |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Gitleaks (job `secrets`)     | Bloquea el merge si encuentra una contraseña o un token en cualquier commit.                                                                     |
-| Protección de push de GitHub | Rechaza el envío de commits con tokens de servicios conocidos antes de que lleguen al repositorio.                                               |
-| CodeQL                       | Analiza el código y los workflows en cada pull request, en cada push a `main` y todos los lunes. Las alertas de gravedad alta bloquean el merge. |
-| Dependabot                   | Alerta sobre dependencias con fallos conocidos y abre pull requests de actualización (npm y GitHub Actions) todos los lunes.                     |
+| Protección                   | Qué hace                                                                                                                                                                   |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gitleaks (job `secrets`)     | Bloquea el merge si encuentra una contraseña o un token en cualquier commit.                                                                                               |
+| Protección de push de GitHub | Rechaza el envío de commits con tokens de servicios conocidos antes de que lleguen al repositorio.                                                                         |
+| CodeQL                       | Analiza el código y los workflows en cada pull request, en cada push a `main`, todos los lunes y cuando se ejecuta a mano. Las alertas de gravedad alta bloquean el merge. |
+| Dependabot                   | Alerta sobre dependencias con fallos conocidos y abre pull requests de actualización (npm y GitHub Actions) todos los lunes.                                               |
 
 Si se envía un secreto real por error, borrarlo del código no basta: sigue en el historial. Revoca la clave en el servicio de origen y genera una nueva.
 
