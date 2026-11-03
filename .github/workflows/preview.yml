@@ -67,9 +67,11 @@ jobs:
 
       - name: Publish the Cloudflare preview
         id: preview
+        # Wrangler may print notices before the JSON: keep only from the first "{" line on
         run: |
-          output=$(npx wrangler preview --name "$PREVIEW_NAME" --json)
-          url=$(printf '%s' "$output" | jq -er '.preview.urls[0]')
+          npx wrangler preview --name "$PREVIEW_NAME" --json > "$RUNNER_TEMP/preview.json"
+          cat "$RUNNER_TEMP/preview.json"
+          url=$(sed -n '/^{/,$p' "$RUNNER_TEMP/preview.json" | jq -er '.preview.urls[0]')
           echo "Preview URL: ${url}"
           echo "url=${url}" >> "$GITHUB_OUTPUT"
         env:
