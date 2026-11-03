@@ -28,12 +28,14 @@
     "perf:lighthouse": "node scripts/lighthouse.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
     "i18next": "^26.6.0",
     "i18next-browser-languagedetector": "^8.2.4",
     "i18next-resources-to-backend": "^1.2.3",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "react-i18next": "^17.1.10"
+    "react-i18next": "^17.1.10",
+    "wouter": "^3.13.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

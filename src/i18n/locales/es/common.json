@@ -6,5 +6,36 @@
   },
   "language": {
     "label": "Idioma"
+  },
+  "auth": {
+    "signIn": "Entrar",
+    "signOut": "Salir",
+    "intro": "Sin contraseña: enviamos un enlace y un código a tu correo.",
+    "emailLabel": "Correo electrónico",
+    "sendCode": "Enviar",
+    "codeSent": "Enviamos un correo a {{email}}. Haz clic en el enlace o escribe el código aquí.",
+    "codeLabel": "Código de 6 dígitos",
+    "verifyCode": "Confirmar",
+    "useAnotherEmail": "Usar otro correo",
+    "errors": {
+      "invalidCode": "Código inválido o caducado.",
+      "invalidLink": "Este enlace no es válido, caducó o ya se usó. Pide uno nuevo.",
+      "invalidEmail": "Revisa el correo que escribiste.",
+      "tooManyRequests": "Demasiados intentos. Espera un momento e inténtalo de nuevo."
+    }
+  },
+  "profile": {
+    "title": "¿Cómo quieres que te llamemos?",
+    "intro": "Es el nombre que verá tu grupo. Tu correo nunca aparece.",
+    "nameLabel": "Nombre visible",
+    "save": "Guardar",
+    "invalidName": "El nombre debe tener entre 1 y {{max}} caracteres."
+  },
+  "tables": {
+    "title": "Mis mesas",
+    "greeting": "¡Hola, {{name}}!"
+  },
+  "errors": {
+    "generic": "Algo salió mal. Inténtalo de nuevo."
   }
 }

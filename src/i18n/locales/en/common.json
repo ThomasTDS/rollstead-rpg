@@ -6,5 +6,36 @@
   },
   "language": {
     "label": "Language"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "intro": "No password: we send a link and a code to your email.",
+    "emailLabel": "Email",
+    "sendCode": "Send",
+    "codeSent": "We sent an email to {{email}}. Click the link or type the code here.",
+    "codeLabel": "6-digit code",
+    "verifyCode": "Confirm",
+    "useAnotherEmail": "Use another email",
+    "errors": {
+      "invalidCode": "Invalid or expired code.",
+      "invalidLink": "This link is invalid, expired or already used. Request a new one.",
+      "invalidEmail": "Check the email you typed.",
+      "tooManyRequests": "Too many attempts. Wait a moment and try again."
+    }
+  },
+  "profile": {
+    "title": "What should we call you?",
+    "intro": "This is the name your group will see. Your email never shows.",
+    "nameLabel": "Display name",
+    "save": "Save",
+    "invalidName": "The name must have between 1 and {{max}} characters."
+  },
+  "tables": {
+    "title": "My tables",
+    "greeting": "Hello, {{name}}!"
+  },
+  "errors": {
+    "generic": "Something went wrong. Try again."
   }
 }

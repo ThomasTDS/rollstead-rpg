@@ -16,6 +16,7 @@ export default tseslint.config(
       'test-results',
       'blob-report',
       'lighthouse-report',
+      'src/lib/database.types.ts',
     ],
   },
   {
@@ -65,6 +66,10 @@ export default tseslint.config(
               'value',
               'role',
               'href',
+              'to',
+              'autoComplete',
+              'inputMode',
+              'pattern',
               'src',
               'name',
               'data-testid',

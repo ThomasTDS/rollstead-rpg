@@ -6,6 +6,11 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   test: {
+    // Placeholders so the Supabase client can be created; tests never reach a server
+    env: {
+      VITE_SUPABASE_URL: 'http://localhost:54321',
+      VITE_SUPABASE_PUBLISHABLE_KEY: 'test-key',
+    },
     projects: [
       {
         extends: true,

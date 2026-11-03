@@ -58,48 +58,56 @@ En desarrollo inicial. Todavía no hay una versión jugable.
 
    Al terminar, la terminal muestra las direcciones locales, como la API (`http://127.0.0.1:54321`) y Supabase Studio (`http://127.0.0.1:54323`), un panel para inspeccionar la base de datos.
 
-4. Inicia el servidor de desarrollo:
+4. Crea el archivo `.env.local` a partir del ejemplo y pega en él la `ANON_KEY` que muestra `npm run db:status`:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+5. Inicia el servidor de desarrollo:
 
    ```bash
    npm run dev
    ```
 
-5. Abre la dirección que aparece en la terminal (por defecto, `http://localhost:5173`).
+6. Abre la dirección que aparece en la terminal (por defecto, `http://localhost:5173`).
 
 ## Comandos disponibles
 
-| Comando                   | Qué hace                                                                                                    |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `npm run dev`             | Inicia el servidor de desarrollo con recarga automática.                                                    |
-| `npm run build`           | Verifica los tipos y genera la versión de producción en la carpeta `dist/`.                                 |
-| `npm run preview`         | Sirve localmente la versión generada por `build`.                                                           |
-| `npm run lint`            | Analiza el código con ESLint. Falla ante cualquier error o advertencia.                                     |
-| `npm run typecheck`       | Verifica los tipos de TypeScript sin generar archivos.                                                      |
-| `npm run format`          | Formatea todos los archivos con Prettier.                                                                   |
-| `npm run format:check`    | Comprueba el formato sin modificar los archivos.                                                            |
-| `npm run db:start`        | Levanta el Supabase local en Docker y aplica las migraciones.                                               |
-| `npm run db:stop`         | Detiene los contenedores del Supabase local, conservando los datos.                                         |
-| `npm run db:reset`        | Recrea la base de datos local desde cero, aplicando todas las migraciones y el `seed.sql`.                  |
-| `npm run db:status`       | Muestra las direcciones y claves del entorno local.                                                         |
-| `npm run test:db`         | Ejecuta las pruebas pgTAP de la base de datos (requiere la base local en ejecución).                        |
-| `npm test`                | Ejecuta las pruebas unitarias y de componentes (Vitest).                                                    |
-| `npm run test:watch`      | Ejecuta Vitest en modo observación, repitiendo las pruebas en cada cambio.                                  |
-| `npm run test:api`        | Ejecuta las pruebas de API (Playwright) contra el Supabase local (requiere el Supabase local en ejecución). |
-| `npm run test:e2e`        | Ejecuta las pruebas E2E (Playwright) en Chromium contra el build local (ejecuta `npm run build` antes).     |
-| `npm run test:smoke`      | Ejecuta solo las pruebas marcadas con `@smoke`; con `PLAYWRIGHT_BASE_URL`, apunta a un sitio publicado.     |
-| `npm run perf:bundle`     | Mide el paquete inicial comprimido y falla si supera el presupuesto (ejecuta `npm run build` antes).        |
-| `npm run perf:lighthouse` | Ejecuta Lighthouse tres veces contra el build local y falla si la mediana queda por debajo del mínimo.      |
+| Comando                   | Qué hace                                                                                                                     |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`             | Inicia el servidor de desarrollo con recarga automática.                                                                     |
+| `npm run build`           | Verifica los tipos y genera la versión de producción en la carpeta `dist/`.                                                  |
+| `npm run preview`         | Sirve localmente la versión generada por `build`.                                                                            |
+| `npm run lint`            | Analiza el código con ESLint. Falla ante cualquier error o advertencia.                                                      |
+| `npm run typecheck`       | Verifica los tipos de TypeScript sin generar archivos.                                                                       |
+| `npm run format`          | Formatea todos los archivos con Prettier.                                                                                    |
+| `npm run format:check`    | Comprueba el formato sin modificar los archivos.                                                                             |
+| `npm run db:start`        | Levanta el Supabase local en Docker y aplica las migraciones.                                                                |
+| `npm run db:stop`         | Detiene los contenedores del Supabase local, conservando los datos.                                                          |
+| `npm run db:reset`        | Recrea la base de datos local desde cero, aplicando todas las migraciones y el `seed.sql`.                                   |
+| `npm run db:status`       | Muestra las direcciones y claves del entorno local.                                                                          |
+| `npm run test:db`         | Ejecuta las pruebas pgTAP de la base de datos (requiere la base local en ejecución).                                         |
+| `npm test`                | Ejecuta las pruebas unitarias y de componentes (Vitest).                                                                     |
+| `npm run test:watch`      | Ejecuta Vitest en modo observación, repitiendo las pruebas en cada cambio.                                                   |
+| `npm run test:api`        | Ejecuta las pruebas de API (Playwright) contra el Supabase local (requiere el Supabase local en ejecución).                  |
+| `npm run test:e2e`        | Ejecuta las pruebas E2E (Playwright) en Chromium contra el build local (requiere el Supabase local y `npm run build` antes). |
+| `npm run test:smoke`      | Ejecuta solo las pruebas marcadas con `@smoke`; con `PLAYWRIGHT_BASE_URL`, apunta a un sitio publicado.                      |
+| `npm run perf:bundle`     | Mide el paquete inicial comprimido y falla si supera el presupuesto (ejecuta `npm run build` antes).                         |
+| `npm run perf:lighthouse` | Ejecuta Lighthouse tres veces contra el build local y falla si la mediana queda por debajo del mínimo.                       |
 
 ## Estructura del proyecto
 
 ```
 rollstead-rpg/
 ├── src/                 # Código fuente de la aplicación
-│   ├── App.tsx          # Componente raíz
+│   ├── App.tsx          # Componente raíz y rutas
 │   ├── App.test.tsx     # Ejemplo de prueba de componente
+│   ├── auth/            # Sesión, protección de rutas y mensajes de error del login
 │   ├── components/      # Componentes reutilizables
 │   ├── i18n/            # Idiomas: configuración y archivos de traducción (locales/)
 │   ├── lib/             # Lógica pura, con la prueba junto a cada archivo (*.test.ts)
+│   ├── pages/           # Pantallas
 │   ├── styles/          # Tema: tokens de color (theme.css), únicos con valores de color
 │   ├── test/setup.ts    # Preparación de las pruebas de componentes
 │   └── main.tsx         # Punto de entrada
@@ -107,10 +115,12 @@ rollstead-rpg/
 ├── supabase/
 │   ├── config.toml      # Configuración del Supabase local
 │   ├── migrations/      # Migraciones de la base de datos, aplicadas en orden
+│   ├── templates/       # Plantilla del correo de login
 │   ├── tests/database/  # Pruebas pgTAP
 │   └── seed.sql         # Datos de desarrollo aplicados en db:reset
 ├── tests/               # Pruebas de Playwright
 │   ├── api/             # Pruebas de API (contrato con Zod)
+│   ├── support/         # Apoyo a las pruebas: Supabase local y bandeja de correo
 │   └── e2e/             # Pruebas E2E
 │       ├── pages/       # Page Objects (POM)
 │       └── fixtures.ts  # Fixtures que entregan los Page Objects a las pruebas
@@ -171,7 +181,7 @@ Convenciones:
 
 - Las pruebas unitarias usan el entorno Node; las de componentes (`.test.tsx`) usan jsdom.
 - Las pruebas E2E nunca usan selectores sueltos: cada pantalla tiene un Page Object en `tests/e2e/pages/`, entregado a las pruebas por las fixtures de `tests/e2e/fixtures.ts`.
-- Las pruebas de API usan solo la clave pública (anon) de Supabase, leída automáticamente del Supabase local.
+- Las pruebas de API y E2E usan solo la clave pública (anon) de Supabase, leída automáticamente del Supabase local. El login en las pruebas sigue el flujo real: el código y el enlace se leen de la bandeja local (Mailpit), nunca de una clave de servicio.
 - Por ahora el E2E se ejecuta solo en Chromium; Firefox y WebKit se suman antes de la beta.
 
 La primera vez, instala el navegador que usa Playwright:
@@ -184,16 +194,16 @@ npx playwright install chromium
 
 Cada pull request y cada push a la rama `main` pasan por GitHub Actions (`.github/workflows/ci.yml`). Un pull request solo puede fusionarse con todos estos jobs aprobados:
 
-| Job                                                   | Qué verifica                                                                                                                   |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `quality`                                             | Formato, lint, tipos y build de producción.                                                                                    |
-| `database`                                            | Levanta la base de datos local de Supabase a partir de las migraciones y ejecuta las pruebas pgTAP.                            |
-| `unit`                                                | Pruebas unitarias y de componentes (Vitest).                                                                                   |
-| `api`                                                 | Levanta la API del Supabase local y ejecuta las pruebas de API (Playwright).                                                   |
-| `e2e`                                                 | Ejecuta las pruebas E2E (Playwright, Chromium) contra el mismo build generado por el job `quality`.                            |
-| `performance`                                         | Comprueba el tamaño del paquete inicial y las notas de Lighthouse frente al presupuesto de rendimiento.                        |
-| `secrets`                                             | Busca contraseñas y tokens en todo el historial de Git con [Gitleaks](https://github.com/gitleaks/gitleaks).                   |
-| `codeql (javascript-typescript)` y `codeql (actions)` | Análisis de seguridad del código y de los workflows con [CodeQL](https://codeql.github.com/) (`.github/workflows/codeql.yml`). |
+| Job                                                   | Qué verifica                                                                                                                                                           |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `quality`                                             | Formato, lint, tipos y build de producción.                                                                                                                            |
+| `database`                                            | Levanta la base de datos local de Supabase a partir de las migraciones y ejecuta las pruebas pgTAP.                                                                    |
+| `unit`                                                | Pruebas unitarias y de componentes (Vitest).                                                                                                                           |
+| `api`                                                 | Levanta la API del Supabase local y ejecuta las pruebas de API (Playwright).                                                                                           |
+| `e2e`                                                 | Levanta el Supabase local, genera un build que apunta a él y ejecuta las pruebas E2E (Playwright, Chromium), incluido el login con el correo real en la bandeja local. |
+| `performance`                                         | Comprueba el tamaño del paquete inicial y las notas de Lighthouse frente al presupuesto de rendimiento.                                                                |
+| `secrets`                                             | Busca contraseñas y tokens en todo el historial de Git con [Gitleaks](https://github.com/gitleaks/gitleaks).                                                           |
+| `codeql (javascript-typescript)` y `codeql (actions)` | Análisis de seguridad del código y de los workflows con [CodeQL](https://codeql.github.com/) (`.github/workflows/codeql.yml`).                                         |
 
 Para comprobar localmente antes de abrir un pull request, con el Supabase local en ejecución:
 
@@ -222,6 +232,14 @@ npm run build
 npx wrangler deploy --dry-run
 ```
 
+## Login
+
+No hay contraseña: `/entrar` envía un correo con un enlace y un código de 6 dígitos, y cualquiera de los dos abre la sesión. El código permite entrar en el dispositivo que pidió el correo, aunque se lea en otro. En el primer acceso, la persona elige el nombre visible, que es lo que ve el grupo; el correo nunca se muestra.
+
+- La app lee `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` en el build. Ambos son públicos por naturaleza: lo que protege los datos es la RLS. El build de producción usa la base de datos de producción; los previews, la de staging; las pruebas, la local.
+- En el Supabase local, los correos no se envían de verdad: quedan en la bandeja en `http://127.0.0.1:54324`.
+- La plantilla del correo está en `supabase/templates/magic-link.html`. En los proyectos en la nube, se configura en el panel de Supabase.
+
 ## Entorno de pruebas (previews)
 
 Cada pull request recibe una dirección propia para revisarla a mano antes del merge, publicada por el workflow `.github/workflows/preview.yml`:
@@ -231,7 +249,7 @@ Cada pull request recibe una dirección propia para revisarla a mano antes del m
 3. Genera el build y lo publica como un [Preview de Cloudflare Workers](https://developers.cloudflare.com/workers/previews/), en `pr-<número>-rollstead.rollstead.workers.dev`.
 4. Comenta la dirección en el pull request y ejecuta las pruebas `@smoke` sobre ella.
 
-Los previews comparten la misma base de datos de staging, así que se ejecutan de uno en uno. Los pull requests de forks y de Dependabot no generan preview, porque no reciben las claves de staging. El preview no es una verificación obligatoria del merge.
+Los previews comparten la misma base de datos de staging, así que se ejecutan de uno en uno. Los pull requests de forks y de Dependabot no generan preview, porque no reciben las claves de staging. El preview no es una verificación obligatoria del merge. El login en un preview necesita que su dirección esté autorizada en Supabase.
 
 Las credenciales de staging (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `SUPABASE_ACCESS_TOKEN` y `SUPABASE_DB_PASSWORD`) están en los secrets del entorno `staging`, separadas de las de producción.
 
