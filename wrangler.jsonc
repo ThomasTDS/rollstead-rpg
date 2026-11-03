@@ -12,4 +12,6 @@
   ],
   "workers_dev": false,
   "preview_urls": false,
+  // Pull request previews (preview.yml). No production settings are inherited.
+  "previews": {},
 }

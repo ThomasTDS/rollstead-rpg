@@ -1,8 +1,8 @@
 name: Keep-alive
 
 # Free Supabase projects pause after 7 days without activity. A light read every
-# 3 days keeps the database awake between game sessions. Only the public
-# (publishable) key is used, never a service key.
+# 3 days keeps both databases (production and staging) awake between game
+# sessions. Only the public (publishable) keys are used, never a service key.
 #
 # GitHub disables scheduled workflows in public repositories after 60 days without
 # repository activity: check this workflow is still enabled every 2 months.
@@ -16,14 +16,18 @@ permissions: {}
 
 jobs:
   ping:
-    name: ping
+    name: ping (${{ matrix.project }})
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [production, staging]
     steps:
       - name: Read the health check row
         env:
-          SUPABASE_URL: https://tfvnmafqramhmmbhmsvb.supabase.co
-          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_URL: ${{ matrix.project == 'staging' && 'https://jgunfwjjdadgaztlpsjc.supabase.co' || 'https://tfvnmafqramhmmbhmsvb.supabase.co' }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ matrix.project == 'staging' && secrets.SUPABASE_STAGING_PUBLISHABLE_KEY || secrets.SUPABASE_PUBLISHABLE_KEY }}
         run: |
           response=$(curl -sS --fail-with-body --retry 3 --retry-delay 20 \
             -H "apikey: ${SUPABASE_PUBLISHABLE_KEY}" \

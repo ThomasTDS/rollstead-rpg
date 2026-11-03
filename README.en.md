@@ -222,14 +222,40 @@ npm run build
 npx wrangler deploy --dry-run
 ```
 
+## Test environment (previews)
+
+Every pull request gets its own address to be checked by hand before merging, published by the `.github/workflows/preview.yml` workflow:
+
+1. The `preview` job waits for the owner's approval (GitHub `staging` environment, with a required reviewer).
+2. It rebuilds the staging database from scratch (a second free Supabase project, also in São Paulo) with the pull request's migrations and `seed.sql`.
+3. It builds the app and publishes it as a [Cloudflare Workers Preview](https://developers.cloudflare.com/workers/previews/), at `pr-<number>-rollstead.rollstead.workers.dev`.
+4. It comments the address on the pull request and runs the `@smoke` tests against it.
+
+Previews share the same staging database, so they run one at a time. Pull requests from forks and from Dependabot get no preview, because they do not receive the staging keys. The preview is not a required merge check.
+
+The staging credentials (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `SUPABASE_ACCESS_TOKEN` and `SUPABASE_DB_PASSWORD`) live in the secrets of the `staging` environment, apart from the production ones.
+
 ## Production database and keep-alive
 
-The production database is a free Supabase project in the São Paulo region. Free projects pause after 7 days without activity, so the `.github/workflows/keep-alive.yml` workflow makes a light read on the `health_check` table every 3 days.
+The production database is a free Supabase project in the São Paulo region. Free projects pause after 7 days without activity, so the `.github/workflows/keep-alive.yml` workflow makes a light read on the `health_check` table of both databases (production and staging) every 3 days.
 
-- It uses only the public key (`SUPABASE_PUBLISHABLE_KEY`, a repository secret), never a service key.
+- It uses only the public keys (`SUPABASE_PUBLISHABLE_KEY` and `SUPABASE_STAGING_PUBLISHABLE_KEY`, repository secrets), never a service key.
 - If the read fails, GitHub sends a workflow failure email.
 - It can be run by hand from the **Actions** tab → **Keep-alive** → **Run workflow**.
 - GitHub disables schedules in public repositories after 60 days without activity. Every 2 months, check in the **Actions** tab that the workflow is still enabled.
+
+## Credentials check
+
+The `.github/workflows/credentials-check.yml` workflow proves that every external key still works, without publishing or changing anything:
+
+| Check             | How                                                                      |
+| ----------------- | ------------------------------------------------------------------------ |
+| Cloudflare token  | Lists the Worker deployments (`wrangler deployments list`).              |
+| Supabase token    | Reads the project from the management API and checks region `sa-east-1`. |
+| Database password | Connects and simulates the migrations (`supabase db push --dry-run`).    |
+| Public key        | Reads the `health_check` table.                                          |
+
+It runs every Monday for production. Staging runs only by hand (**Actions** tab → **Credentials check** → **Run workflow**), because every use of the `staging` environment waits for approval. Run it before merging any pull request that depends on new external setup.
 
 ## Performance budget
 
@@ -247,12 +273,12 @@ Lighthouse uses the installed Google Chrome or, if there is none, Playwright's C
 
 ## Security
 
-| Protection               | What it does                                                                                                                        |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Gitleaks (`secrets` job) | Blocks the merge if it finds a password or token in any commit.                                                                     |
-| GitHub push protection   | Rejects pushes containing tokens from known services before they reach the repository.                                              |
-| CodeQL                   | Analyzes the code and workflows on every pull request, every push to `main` and every Monday. High-severity alerts block the merge. |
-| Dependabot               | Alerts on dependencies with known vulnerabilities and opens update pull requests (npm and GitHub Actions) every Monday.             |
+| Protection               | What it does                                                                                                                                          |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gitleaks (`secrets` job) | Blocks the merge if it finds a password or token in any commit.                                                                                       |
+| GitHub push protection   | Rejects pushes containing tokens from known services before they reach the repository.                                                                |
+| CodeQL                   | Analyzes the code and workflows on every pull request, every push to `main`, every Monday and when run by hand. High-severity alerts block the merge. |
+| Dependabot               | Alerts on dependencies with known vulnerabilities and opens update pull requests (npm and GitHub Actions) every Monday.                               |
 
 If a real secret is pushed by mistake, deleting it from the code is not enough: it stays in the history. Revoke the key at its source service and issue a new one.
 
