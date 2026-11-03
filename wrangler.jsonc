@@ -10,8 +10,10 @@
     { "pattern": "rollstead.com.br", "custom_domain": true },
     { "pattern": "www.rollstead.com.br", "custom_domain": true },
   ],
+  // The site itself is served only on the custom domains above
   "workers_dev": false,
-  "preview_urls": false,
+  // Required for the pull request previews to get a *.workers.dev address
+  "preview_urls": true,
   // Pull request previews (preview.yml). No production settings are inherited.
   "previews": {},
 }
