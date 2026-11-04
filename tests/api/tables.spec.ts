@@ -1,7 +1,5 @@
 import { z } from 'zod'
-import { expect, test, type SignedInUser } from './fixtures'
-
-const tableIdSchema = z.uuid()
+import { createTable, expect, test, type SignedInUser } from './fixtures'
 
 // strictObject: any extra field in the response, such as an email, fails the test
 const membersSchema = z.array(
@@ -13,12 +11,6 @@ const membersSchema = z.array(
     profiles: z.strictObject({ display_name: z.string() }),
   }),
 )
-
-async function createTable({ api }: SignedInUser, name: string) {
-  const response = await api.post('rpc/create_table', { data: { table_name: name } })
-  expect(response.status()).toBe(200)
-  return tableIdSchema.parse(await response.json())
-}
 
 async function tableNames({ api }: SignedInUser) {
   const response = await api.get('game_tables?select=name')

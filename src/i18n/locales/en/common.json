@@ -45,6 +45,25 @@
       "player": "Player"
     }
   },
+  "manage": {
+    "title": "Manage table",
+    "noInvite": "No active invite link.",
+    "generate": "Generate invite link",
+    "regenerate": "Generate new link",
+    "active": "There is an active invite link until {{date}}. Generating a new one cancels it.",
+    "linkLabel": "Invite link",
+    "linkOnce": "Copy it now: for security, this link is shown only once.",
+    "copy": "Copy link",
+    "copied": "Copied!",
+    "revoke": "Revoke link"
+  },
+  "invites": {
+    "title": "You have been invited",
+    "intro": "You have been invited to the table {{name}}.",
+    "join": "Join the table",
+    "invalid": "This invite is invalid, expired or was revoked.",
+    "tableFull": "This table is already full."
+  },
   "errors": {
     "generic": "Something went wrong. Try again."
   }

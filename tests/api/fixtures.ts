@@ -1,4 +1,9 @@
-import { test as base, type APIRequestContext, type PlaywrightWorkerArgs } from '@playwright/test'
+import {
+  expect,
+  test as base,
+  type APIRequestContext,
+  type PlaywrightWorkerArgs,
+} from '@playwright/test'
 import { z } from 'zod'
 import {
   readLoginEmail,
@@ -15,6 +20,12 @@ const verifySchema = z.object({
 export interface SignedInUser {
   id: string
   api: APIRequestContext
+}
+
+export async function createTable({ api }: SignedInUser, name: string) {
+  const response = await api.post('rpc/create_table', { data: { table_name: name } })
+  expect(response.status()).toBe(200)
+  return z.uuid().parse(await response.json())
 }
 
 interface ApiFixtures {
@@ -90,4 +101,4 @@ export const test = base.extend<ApiFixtures, ApiWorkerFixtures>({
   },
 })
 
-export { expect } from '@playwright/test'
+export { expect }

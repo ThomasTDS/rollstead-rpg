@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Redirect } from 'wouter'
+import { Redirect, useLocation } from 'wouter'
 import { Window } from '../components/Window'
 import { DisplayNamePage } from '../pages/DisplayNamePage'
 import { useAuth } from './auth-context'
@@ -9,10 +9,14 @@ import { useAuth } from './auth-context'
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { t } = useTranslation()
   const { loading, session, displayName, profileFailed } = useAuth()
+  const [location] = useLocation()
 
   if (loading) return null
-  // Keeps the hash: a rejected magic link comes back with its error in it
-  if (!session) return <Redirect to={`/entrar${window.location.hash}`} replace />
+  if (!session) {
+    // Comes back here after signing in. Keeps the hash: a rejected magic link carries its error
+    const login = `/entrar?next=${encodeURIComponent(location)}${window.location.hash}`
+    return <Redirect to={login} replace />
+  }
   if (profileFailed) {
     return (
       <Window>

@@ -44,7 +44,7 @@ test.describe('Login', () => {
     await expect(loginPage.emailInput).toBeVisible()
 
     await tablesPage.goto()
-    await expect(page).toHaveURL('/entrar')
+    await expect(page).toHaveURL('/entrar?next=%2Fmesas')
   })
 
   test('the emailed link signs in', async ({ loginPage, displayNamePage, mailpitUrl, page }) => {

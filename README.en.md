@@ -241,6 +241,14 @@ There is no password: `/entrar` sends an email with a link and a 6-digit code, a
 - In the local Supabase, emails are not really sent: they stay in the inbox at `http://127.0.0.1:54324`.
 - The email template lives in `supabase/templates/magic-link.html`. In cloud projects it is set in the Supabase dashboard.
 
+## Invites
+
+The game master generates the invite link in the **Manage table** area, which only they can see. Each table has one link, valid for 7 days and for several players, with a limit of 8 players per table.
+
+- The database stores only a hash of the token. The link is shown once, when generated; if it is lost, the game master generates another one and the old one stops working.
+- Whoever opens the link goes through login if needed, sees the table name and confirms with **Join the table**.
+- Every operation is a server function (`create_invite`, `revoke_invite`, `get_invite` and `join_table`) that checks the caller's role. Hiding the area on screen is not the protection: the API refuses too.
+
 ## Test environment (previews)
 
 Every pull request gets its own address to be checked by hand before merging, published by the `.github/workflows/preview.yml` workflow:
