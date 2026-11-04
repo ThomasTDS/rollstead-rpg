@@ -36,6 +36,7 @@ const pairs: [string, string, number][] = [
   ['accent', 'background', 3],
   ['window-foreground', 'window', 4.5],
   ['window-accent', 'window', 4.5],
+  ['window', 'window-accent', 4.5],
 ]
 
 describe('theme tokens', () => {

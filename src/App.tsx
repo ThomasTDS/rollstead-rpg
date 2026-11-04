@@ -1,22 +1,29 @@
-import { useTranslation } from 'react-i18next'
+import { Route, Switch } from 'wouter'
+import { AuthProvider } from './auth/AuthProvider'
+import { RequireAuth } from './auth/RequireAuth'
 import { LanguageSwitcher } from './components/LanguageSwitcher'
+import { HomePage } from './pages/HomePage'
+import { LoginPage } from './pages/LoginPage'
+import { TablesPage } from './pages/TablesPage'
 
 function App() {
-  const { t } = useTranslation()
-
   return (
-    <>
+    <AuthProvider>
       <header className="flex justify-end p-4">
         <LanguageSwitcher />
       </header>
       <main className="mx-auto max-w-xl px-4 py-12">
-        <div className="rounded-lg border-4 border-window-border bg-window p-8 text-window-foreground">
-          <h1 className="text-4xl font-bold text-window-accent">{t('app.name')}</h1>
-          <p className="mt-4 text-xl">{t('app.tagline')}</p>
-          <p className="mt-2">{t('app.description')}</p>
-        </div>
+        <Switch>
+          <Route path="/entrar" component={LoginPage} />
+          <Route path="/mesas">
+            <RequireAuth>
+              <TablesPage />
+            </RequireAuth>
+          </Route>
+          <Route component={HomePage} />
+        </Switch>
       </main>
-    </>
+    </AuthProvider>
   )
 }
 
