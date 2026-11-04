@@ -140,7 +140,7 @@ The database is never changed by hand: every schema change is a versioned migrat
 - To create a migration: `npx supabase migration new <change_name>`.
 - A published migration is never edited; fixes go into a new migration.
 - Every table in the `public` schema must have RLS (Row Level Security) enabled. A test in `supabase/tests/database/rls_enabled.test.sql` fails if any table is created without it.
-- Table members are never written directly through the API: they arrive through server functions, such as `create_table`. The functions behind the access rules live in the `private` schema, outside the API.
+- Table members are never written directly through the API: they arrive through server functions, such as `create_table`. The only direct write is leaving, limited by RLS: the game master removes players and each player removes their own seat. The functions behind the access rules live in the `private` schema, outside the API.
 - Each table stores its game master in `game_tables.master_id`, the single source of that information. A table name is unique per game master, ignoring case, and the database itself enforces it with a unique index.
 - The keys shown by `npm run db:status` are the local Supabase demo keys, identical in every installation. Keys for the real environment never go into the repository.
 
@@ -245,6 +245,8 @@ There is no password: `/entrar` sends an email with a link and a 6-digit code, a
 ## Managing a table
 
 In the **Manage table** area, the game master renames and deletes the table, besides handling the invite. Renaming follows the unique name rule. Deleting asks for the table name to be typed and is final: the table disappears for every participant, and the name becomes free to use again. The database refuses both actions to anyone but the game master.
+
+The same area lists the participants, and the game master can remove a player. A removed player loses access at once, but can return with a valid invite; to prevent that, revoke the link. A player leaves on their own with **Leave table**. The game master cannot leave or be removed from their own table.
 
 ## Invites
 

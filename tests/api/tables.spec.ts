@@ -78,8 +78,10 @@ test.describe('Game tables', () => {
     })
     expect(newMember.status()).toBe(403)
 
-    const removed = await ana.api.delete(`table_members?table_id=eq.${tableId}`)
-    expect(removed.status()).toBe(403)
+    const edited = await ana.api.patch(`table_members?table_id=eq.${tableId}`, {
+      data: { user_id: ana.id },
+    })
+    expect(edited.status()).toBe(403)
   })
 
   test.describe('reject an invalid name', () => {

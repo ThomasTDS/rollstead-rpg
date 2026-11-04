@@ -15,6 +15,9 @@ export class TablePage {
   readonly deleteOpenButton: Locator
   readonly deleteConfirmInput: Locator
   readonly deleteButton: Locator
+  readonly removeConfirmButton: Locator
+  readonly leaveOpenButton: Locator
+  readonly leaveConfirmButton: Locator
   private readonly page: Page
 
   constructor(page: Page) {
@@ -33,10 +36,27 @@ export class TablePage {
     this.deleteOpenButton = page.getByRole('button', { name: 'Excluir mesa' })
     this.deleteConfirmInput = page.getByLabel(/para confirmar$/)
     this.deleteButton = page.getByRole('button', { name: 'Excluir definitivamente' })
+    this.removeConfirmButton = page.getByRole('button', { name: 'Remover da mesa' })
+    this.leaveOpenButton = page.getByRole('button', { name: 'Sair da mesa' })
+    this.leaveConfirmButton = page.getByRole('button', { name: 'Confirmar saída' })
   }
 
   title(name: string) {
     return this.page.getByRole('heading', { level: 1, name })
+  }
+
+  /** Goes through the removal of a player, confirmation included. */
+  async removeMember(name: string) {
+    await this.removeButton(name).click()
+    await this.removeConfirmButton.click()
+  }
+
+  removeButton(name: string) {
+    return this.page.getByRole('button', { name: `Remover ${name}` })
+  }
+
+  member(name: string) {
+    return this.page.getByRole('listitem').filter({ hasText: name })
   }
 
   async rename(name: string) {

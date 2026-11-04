@@ -5,6 +5,7 @@ import { Field } from '../components/Field'
 import { supabase } from '../lib/supabase'
 import { DeleteTable } from './DeleteTable'
 import { RenameTable } from './RenameTable'
+import { TableMembers } from './TableMembers'
 
 interface InviteState {
   tableId: string
@@ -128,6 +129,7 @@ export function ManageTable({ tableId, tableName, onRenamed }: ManageTableProps)
         </p>
       )}
 
+      <TableMembers tableId={tableId} />
       <RenameTable tableId={tableId} tableName={tableName} onRenamed={onRenamed} />
       <DeleteTable tableId={tableId} tableName={tableName} />
     </section>

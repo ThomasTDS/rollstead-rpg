@@ -103,7 +103,7 @@ select throws_ok(
   null,
   'a 61-character name is rejected'
 );
-select throws_ok($$ delete from public.table_members $$, '42501', null, 'not even the master deletes members directly');
+select throws_ok($$ update public.table_members set joined_at = now() $$, '42501', null, 'not even the master edits a seat directly');
 select lives_ok($$ select public.create_table('Segunda mesa') $$, 'a user creates a table');
 select results_eq(
   $$ select t.master_id

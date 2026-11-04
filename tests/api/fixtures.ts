@@ -28,6 +28,14 @@ export async function createTable({ api }: SignedInUser, name: string) {
   return z.uuid().parse(await response.json())
 }
 
+/** Seats the player through a fresh invite, which cancels any previous one. */
+export async function joinTable(master: SignedInUser, player: SignedInUser, tableId: string) {
+  const invite = await master.api.post('rpc/create_invite', { data: { target_table: tableId } })
+  const token = z.string().parse(await invite.json())
+  const joined = await player.api.post('rpc/join_table', { data: { invite_token: token } })
+  expect(joined.status()).toBe(200)
+}
+
 interface ApiFixtures {
   anonApi: APIRequestContext
   authApi: APIRequestContext
