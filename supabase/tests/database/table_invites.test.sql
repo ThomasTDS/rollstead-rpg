@@ -18,13 +18,13 @@ values
   ('00000000-0000-0000-0000-00000000000c', 'Caio'),
   ('00000000-0000-0000-0000-00000000000d', 'Duda');
 
-insert into public.game_tables (id, name)
-values ('10000000-0000-0000-0000-000000000001', 'Mesa da Ana');
+insert into public.game_tables (id, name, master_id)
+values ('10000000-0000-0000-0000-000000000001', 'Mesa da Ana', '00000000-0000-0000-0000-00000000000a');
 
-insert into public.table_members (table_id, user_id, role)
+insert into public.table_members (table_id, user_id)
 values
-  ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000a', 'master'),
-  ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000b', 'player');
+  ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000a'),
+  ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000b');
 
 -- The real token, generated as Ana, is kept here so the other roles can use it
 create temporary table test_token (token text);
@@ -118,9 +118,12 @@ select results_eq(
 reset role;
 
 select results_eq(
-  $$ select role::text from public.table_members where user_id = '00000000-0000-0000-0000-00000000000c' $$,
-  $$ values ('player') $$,
-  'a new member joins as a player'
+  $$ select t.master_id
+     from public.table_members m
+     join public.game_tables t on t.id = m.table_id
+     where m.user_id = '00000000-0000-0000-0000-00000000000c' $$,
+  $$ values ('00000000-0000-0000-0000-00000000000a'::uuid) $$,
+  'a new member joins as a player: the master stays the same'
 );
 select results_eq(
   $$ select count(*) from public.table_members where user_id = '00000000-0000-0000-0000-00000000000b' $$,
@@ -152,8 +155,8 @@ insert into auth.users (id, email)
 select gen_random_uuid(), 'filler' || n || '@example.com' from generate_series(1, 6) n;
 insert into public.profiles (id, display_name)
 select id, 'Filler' from auth.users where email like 'filler%';
-insert into public.table_members (table_id, user_id, role)
-select '10000000-0000-0000-0000-000000000001', id, 'player' from public.profiles where display_name = 'Filler';
+insert into public.table_members (table_id, user_id)
+select '10000000-0000-0000-0000-000000000001', id from public.profiles where display_name = 'Filler';
 
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000d"}', true);

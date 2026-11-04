@@ -32,6 +32,7 @@
     "invalidName": "El nombre debe tener entre 1 y {{max}} caracteres."
   },
   "tables": {
+    "duplicateName": "Ya tienes una mesa con ese nombre.",
     "title": "Mis mesas",
     "greeting": "¡Hola, {{name}}!",
     "empty": "Crea tu primera mesa.",
@@ -46,6 +47,14 @@
     }
   },
   "manage": {
+    "renameLabel": "Nombre de la mesa",
+    "rename": "Renombrar",
+    "renamed": "Nombre cambiado.",
+    "deleteOpen": "Eliminar mesa",
+    "deleteWarning": "La eliminación es definitiva: la mesa desaparece de la lista de todos los participantes.",
+    "deleteConfirmLabel": "Escribe {{name}} para confirmar",
+    "deleteConfirm": "Eliminar definitivamente",
+    "deleteCancel": "Cancelar",
     "title": "Gestionar mesa",
     "noInvite": "No hay ningún enlace de invitación activo.",
     "generate": "Generar enlace de invitación",

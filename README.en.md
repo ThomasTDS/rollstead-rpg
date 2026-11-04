@@ -141,6 +141,7 @@ The database is never changed by hand: every schema change is a versioned migrat
 - A published migration is never edited; fixes go into a new migration.
 - Every table in the `public` schema must have RLS (Row Level Security) enabled. A test in `supabase/tests/database/rls_enabled.test.sql` fails if any table is created without it.
 - Table members are never written directly through the API: they arrive through server functions, such as `create_table`. The functions behind the access rules live in the `private` schema, outside the API.
+- Each table stores its game master in `game_tables.master_id`, the single source of that information. A table name is unique per game master, ignoring case, and the database itself enforces it with a unique index.
 - The keys shown by `npm run db:status` are the local Supabase demo keys, identical in every installation. Keys for the real environment never go into the repository.
 
 ## Languages
@@ -240,6 +241,10 @@ There is no password: `/entrar` sends an email with a link and a 6-digit code, a
 - The app reads `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` at build time. Both are public by design: RLS is what protects the data. The production build uses the production database; previews use staging; tests use the local one.
 - In the local Supabase, emails are not really sent: they stay in the inbox at `http://127.0.0.1:54324`.
 - The email template lives in `supabase/templates/magic-link.html`. In cloud projects it is set in the Supabase dashboard.
+
+## Managing a table
+
+In the **Manage table** area, the game master renames and deletes the table, besides handling the invite. Renaming follows the unique name rule. Deleting asks for the table name to be typed and is final: the table disappears for every participant, and the name becomes free to use again. The database refuses both actions to anyone but the game master.
 
 ## Invites
 

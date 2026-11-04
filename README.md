@@ -141,6 +141,7 @@ O banco nunca é alterado à mão: toda mudança de estrutura vira uma migration
 - Uma migration já publicada não é editada; correções viram uma migration nova.
 - Toda tabela do schema `public` precisa de RLS (Row Level Security) ativada. Um teste em `supabase/tests/database/rls_enabled.test.sql` falha se alguma tabela for criada sem ela.
 - Membros de uma mesa nunca são gravados diretamente pela API: entram por funções no servidor, como `create_table`. As funções que apoiam as regras de acesso ficam no schema `private`, fora da API.
+- Cada mesa guarda o mestre em `game_tables.master_id`, a única fonte dessa informação. O nome da mesa é único por mestre, sem diferenciar maiúsculas de minúsculas, e o próprio banco garante isso com um índice único.
 - As chaves exibidas por `npm run db:status` são as chaves de demonstração do Supabase local, iguais em todas as instalações. As chaves do ambiente real nunca vão para o repositório.
 
 ## Idiomas
@@ -240,6 +241,10 @@ Não há senha: `/entrar` envia um e-mail com um link e um código de 6 dígitos
 - O app lê `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` no build. Os dois são públicos por natureza: quem protege os dados é a RLS. O build de produção usa o banco de produção; os previews, o de staging; os testes, o local.
 - No Supabase local, os e-mails não saem de verdade: ficam na caixa em `http://127.0.0.1:54324`.
 - O modelo do e-mail fica em `supabase/templates/magic-link.html`. Nos projetos na nuvem, ele é configurado no painel do Supabase.
+
+## Gerenciar a mesa
+
+Na área **Gerenciar mesa**, o mestre renomeia e exclui a mesa, além de cuidar do convite. Renomear segue a regra de nome único. Excluir pede a digitação do nome da mesa e é definitivo: a mesa some para todos os participantes, e o nome fica livre para ser usado de novo. O banco recusa as duas ações para quem não é o mestre.
 
 ## Convites
 

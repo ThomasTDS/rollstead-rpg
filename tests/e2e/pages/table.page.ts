@@ -10,6 +10,11 @@ export class TablePage {
   readonly copyButton: Locator
   readonly linkInput: Locator
   readonly activeMessage: Locator
+  readonly renameInput: Locator
+  readonly renameButton: Locator
+  readonly deleteOpenButton: Locator
+  readonly deleteConfirmInput: Locator
+  readonly deleteButton: Locator
   private readonly page: Page
 
   constructor(page: Page) {
@@ -23,10 +28,26 @@ export class TablePage {
     this.copyButton = page.getByRole('button', { name: 'Copiar link' })
     this.linkInput = page.getByLabel('Link de convite')
     this.activeMessage = page.getByText(/link de convite ativo até/)
+    this.renameInput = page.getByLabel('Nome da mesa', { exact: true })
+    this.renameButton = page.getByRole('button', { name: 'Renomear' })
+    this.deleteOpenButton = page.getByRole('button', { name: 'Excluir mesa' })
+    this.deleteConfirmInput = page.getByLabel(/para confirmar$/)
+    this.deleteButton = page.getByRole('button', { name: 'Excluir definitivamente' })
   }
 
   title(name: string) {
     return this.page.getByRole('heading', { level: 1, name })
+  }
+
+  async rename(name: string) {
+    await this.renameInput.fill(name)
+    await this.renameButton.click()
+  }
+
+  async deleteTable(name: string) {
+    await this.deleteOpenButton.click()
+    await this.deleteConfirmInput.fill(name)
+    await this.deleteButton.click()
   }
 
   /** Generates the invite and returns its path, read from the one time it is shown. */

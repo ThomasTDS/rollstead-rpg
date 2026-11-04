@@ -141,6 +141,7 @@ La base de datos nunca se modifica a mano: cada cambio de estructura es una migr
 - Una migración ya publicada no se edita; las correcciones van en una migración nueva.
 - Toda tabla del schema `public` debe tener RLS (Row Level Security) activada. Una prueba en `supabase/tests/database/rls_enabled.test.sql` falla si alguna tabla se crea sin ella.
 - Los miembros de una mesa nunca se escriben directamente por la API: entran mediante funciones en el servidor, como `create_table`. Las funciones que apoyan las reglas de acceso están en el schema `private`, fuera de la API.
+- Cada mesa guarda al máster en `game_tables.master_id`, la única fuente de esa información. El nombre de la mesa es único por máster, sin distinguir mayúsculas de minúsculas, y la propia base de datos lo garantiza con un índice único.
 - Las claves que muestra `npm run db:status` son las claves de demostración del Supabase local, iguales en todas las instalaciones. Las claves del entorno real nunca van al repositorio.
 
 ## Idiomas
@@ -240,6 +241,10 @@ No hay contraseña: `/entrar` envía un correo con un enlace y un código de 6 d
 - La app lee `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` en el build. Ambos son públicos por naturaleza: lo que protege los datos es la RLS. El build de producción usa la base de datos de producción; los previews, la de staging; las pruebas, la local.
 - En el Supabase local, los correos no se envían de verdad: quedan en la bandeja en `http://127.0.0.1:54324`.
 - La plantilla del correo está en `supabase/templates/magic-link.html`. En los proyectos en la nube, se configura en el panel de Supabase.
+
+## Gestionar la mesa
+
+En el área **Gestionar mesa**, el máster renombra y elimina la mesa, además de ocuparse de la invitación. Renombrar sigue la regla de nombre único. Eliminar pide escribir el nombre de la mesa y es definitivo: la mesa desaparece para todos los participantes y el nombre queda libre para usarse de nuevo. La base de datos rechaza ambas acciones a quien no sea el máster.
 
 ## Invitaciones
 

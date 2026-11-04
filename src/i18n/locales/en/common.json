@@ -32,6 +32,7 @@
     "invalidName": "The name must have between 1 and {{max}} characters."
   },
   "tables": {
+    "duplicateName": "You already have a table with this name.",
     "title": "My tables",
     "greeting": "Hello, {{name}}!",
     "empty": "Create your first table.",
@@ -46,6 +47,14 @@
     }
   },
   "manage": {
+    "renameLabel": "Table name",
+    "rename": "Rename",
+    "renamed": "Name changed.",
+    "deleteOpen": "Delete table",
+    "deleteWarning": "Deleting is final: the table disappears from every participant's list.",
+    "deleteConfirmLabel": "Type {{name}} to confirm",
+    "deleteConfirm": "Delete for good",
+    "deleteCancel": "Cancel",
     "title": "Manage table",
     "noInvite": "No active invite link.",
     "generate": "Generate invite link",

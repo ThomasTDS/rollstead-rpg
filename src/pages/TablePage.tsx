@@ -3,14 +3,13 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'wouter'
 import { useAuth } from '../auth/auth-context'
 import { Window } from '../components/Window'
-import type { Database } from '../lib/database.types'
 import { supabase } from '../lib/supabase'
 import { ManageTable } from './ManageTable'
 
 interface LoadedTable {
   id: string
   /** Null when the user is not a member: to them, the table does not exist. */
-  seat: { name: string; role: Database['public']['Enums']['table_role'] } | null
+  seat: { name: string; isMaster: boolean } | null
 }
 
 export function TablePage({ id }: { id: string }) {
@@ -24,7 +23,7 @@ export function TablePage({ id }: { id: string }) {
     let active = true
     void supabase
       .from('table_members')
-      .select('role, game_tables(name)')
+      .select('game_tables!table_members_table_id_fkey(name, master_id)')
       .eq('table_id', id)
       .eq('user_id', userId)
       .maybeSingle()
@@ -32,7 +31,9 @@ export function TablePage({ id }: { id: string }) {
         if (active) {
           setTable({
             id,
-            seat: data ? { name: data.game_tables.name, role: data.role } : null,
+            seat: data
+              ? { name: data.game_tables.name, isMaster: data.game_tables.master_id === userId }
+              : null,
           })
         }
       })
@@ -48,7 +49,15 @@ export function TablePage({ id }: { id: string }) {
       <h1 className="text-3xl font-bold text-window-accent">
         {table.seat?.name ?? t('tables.notFound')}
       </h1>
-      {table.seat?.role === 'master' && <ManageTable tableId={id} />}
+      {table.seat?.isMaster && (
+        <ManageTable
+          tableId={id}
+          tableName={table.seat.name}
+          onRenamed={(name) => {
+            setTable({ id, seat: { name, isMaster: true } })
+          }}
+        />
+      )}
       <Link href="/mesas" className="mt-4 block text-window-accent underline">
         {t('tables.backToList')}
       </Link>
