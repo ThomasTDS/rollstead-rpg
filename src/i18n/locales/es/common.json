@@ -45,6 +45,25 @@
       "player": "Jugador"
     }
   },
+  "manage": {
+    "title": "Gestionar mesa",
+    "noInvite": "No hay ningún enlace de invitación activo.",
+    "generate": "Generar enlace de invitación",
+    "regenerate": "Generar nuevo enlace",
+    "active": "Hay un enlace de invitación activo hasta {{date}}. Generar uno nuevo cancela el anterior.",
+    "linkLabel": "Enlace de invitación",
+    "linkOnce": "Cópialo ahora: por seguridad, este enlace solo aparece una vez.",
+    "copy": "Copiar enlace",
+    "copied": "¡Copiado!",
+    "revoke": "Revocar enlace"
+  },
+  "invites": {
+    "title": "Has recibido una invitación",
+    "intro": "Te han invitado a la mesa {{name}}.",
+    "join": "Entrar en la mesa",
+    "invalid": "Esta invitación no es válida, caducó o fue revocada.",
+    "tableFull": "Esta mesa ya está llena."
+  },
   "errors": {
     "generic": "Algo salió mal. Inténtalo de nuevo."
   }

@@ -65,6 +65,26 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"table_invites": {
+                  Row: {
+                    "created_at": string,"expires_at": string,"table_id": string,"token_hash": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"expires_at": string,"table_id": string,"token_hash": string
+                  }
+                  Update: {
+                    "created_at"?: string,"expires_at"?: string,"table_id"?: string,"token_hash"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "table_invites_table_id_fkey"
+      columns: ["table_id"]
+isOneToOne: true
+      referencedRelation: "game_tables"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"table_members": {
                   Row: {
                     "joined_at": string,"role": Database["public"]['Enums']["table_role"],"table_id": string,"user_id": string
@@ -97,8 +117,22 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "create_table":
+            "create_invite":
+{ Args: { "target_table": string }; Returns: string
+                           },
+"create_table":
 { Args: { "table_name": string }; Returns: string
+                           },
+"get_invite":
+{ Args: { "invite_token": string }; Returns: {
+              "is_member": boolean,"table_id": string,"table_name": string
+            }[]
+                           },
+"join_table":
+{ Args: { "invite_token": string }; Returns: string
+                           },
+"revoke_invite":
+{ Args: { "target_table": string }; Returns: undefined
                            }
           }
           Enums: {

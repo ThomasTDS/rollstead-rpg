@@ -241,6 +241,14 @@ Não há senha: `/entrar` envia um e-mail com um link e um código de 6 dígitos
 - No Supabase local, os e-mails não saem de verdade: ficam na caixa em `http://127.0.0.1:54324`.
 - O modelo do e-mail fica em `supabase/templates/magic-link.html`. Nos projetos na nuvem, ele é configurado no painel do Supabase.
 
+## Convites
+
+O mestre gera o link de convite na área **Gerenciar mesa**, que só ele vê. Cada mesa tem um link, válido por 7 dias e para vários jogadores, com limite de 8 jogadores por mesa.
+
+- O banco guarda só um hash do token. O link aparece uma vez, ao ser gerado; se for perdido, o mestre gera outro, e o antigo para de valer.
+- Quem abre o link passa pelo login, se preciso, vê o nome da mesa e confirma a entrada em **Entrar na mesa**.
+- Todas as operações são funções no servidor (`create_invite`, `revoke_invite`, `get_invite` e `join_table`), que conferem o papel de quem chama. Esconder a área na tela não é a proteção: a API também recusa.
+
 ## Ambiente de testes (previews)
 
 Cada pull request ganha um endereço próprio para ser conferido à mão antes do merge, publicado pelo workflow `.github/workflows/preview.yml`:

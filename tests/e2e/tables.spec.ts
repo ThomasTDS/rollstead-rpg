@@ -69,6 +69,6 @@ test.describe('Tables', () => {
   test('visitors are sent to the login', async ({ page }) => {
     await page.goto('/mesas/10000000-0000-0000-0000-000000000001')
 
-    await expect(page).toHaveURL('/entrar')
+    await expect(page).toHaveURL(/\/entrar\?next=/)
   })
 })

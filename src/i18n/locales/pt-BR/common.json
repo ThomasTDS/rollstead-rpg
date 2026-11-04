@@ -45,6 +45,25 @@
       "player": "Jogador"
     }
   },
+  "manage": {
+    "title": "Gerenciar mesa",
+    "noInvite": "Nenhum link de convite ativo.",
+    "generate": "Gerar link de convite",
+    "regenerate": "Gerar novo link",
+    "active": "Há um link de convite ativo até {{date}}. Gerar um novo cancela o anterior.",
+    "linkLabel": "Link de convite",
+    "linkOnce": "Copie agora: por segurança, este link só aparece uma vez.",
+    "copy": "Copiar link",
+    "copied": "Copiado!",
+    "revoke": "Revogar link"
+  },
+  "invites": {
+    "title": "Você foi convidado",
+    "intro": "Você foi convidado para a mesa {{name}}.",
+    "join": "Entrar na mesa",
+    "invalid": "Este convite é inválido, expirou ou foi revogado.",
+    "tableFull": "Esta mesa já está cheia."
+  },
   "errors": {
     "generic": "Algo deu errado. Tente de novo."
   }

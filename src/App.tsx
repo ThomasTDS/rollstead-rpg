@@ -3,6 +3,7 @@ import { AuthProvider } from './auth/AuthProvider'
 import { RequireAuth } from './auth/RequireAuth'
 import { LanguageSwitcher } from './components/LanguageSwitcher'
 import { HomePage } from './pages/HomePage'
+import { InvitePage } from './pages/InvitePage'
 import { LoginPage } from './pages/LoginPage'
 import { TablePage } from './pages/TablePage'
 import { TablesPage } from './pages/TablesPage'
@@ -25,6 +26,13 @@ function App() {
             {({ id }) => (
               <RequireAuth>
                 <TablePage id={id} />
+              </RequireAuth>
+            )}
+          </Route>
+          <Route path="/convite/:token">
+            {({ token }) => (
+              <RequireAuth>
+                <InvitePage token={token} />
               </RequireAuth>
             )}
           </Route>

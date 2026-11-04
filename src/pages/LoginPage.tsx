@@ -1,8 +1,9 @@
 import { useState, type SyntheticEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Redirect } from 'wouter'
+import { Redirect, useSearch } from 'wouter'
 import { useAuth } from '../auth/auth-context'
 import { authErrorKey, type AuthErrorKey } from '../auth/auth-errors'
+import { safeNextPath } from '../auth/next-path'
 import { Button, TextButton } from '../components/Button'
 import { Field } from '../components/Field'
 import { Window } from '../components/Window'
@@ -13,6 +14,7 @@ const CODE_LENGTH = 6
 export function LoginPage() {
   const { t } = useTranslation()
   const { session } = useAuth()
+  const next = safeNextPath(new URLSearchParams(useSearch()).get('next'))
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
   const [codeSent, setCodeSent] = useState(false)
@@ -21,7 +23,7 @@ export function LoginPage() {
     window.location.hash.includes('error_code=') ? 'auth.errors.invalidLink' : null,
   )
 
-  if (session) return <Redirect to="/mesas" replace />
+  if (session) return <Redirect to={next} replace />
 
   async function requestCode(event: SyntheticEvent) {
     event.preventDefault()
@@ -29,7 +31,7 @@ export function LoginPage() {
     setErrorKey(null)
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${window.location.origin}/mesas` },
+      options: { emailRedirectTo: `${window.location.origin}${next}` },
     })
     setSending(false)
     if (error) {
