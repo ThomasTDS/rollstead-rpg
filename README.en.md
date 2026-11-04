@@ -140,6 +140,7 @@ The database is never changed by hand: every schema change is a versioned migrat
 - To create a migration: `npx supabase migration new <change_name>`.
 - A published migration is never edited; fixes go into a new migration.
 - Every table in the `public` schema must have RLS (Row Level Security) enabled. A test in `supabase/tests/database/rls_enabled.test.sql` fails if any table is created without it.
+- Table members are never written directly through the API: they arrive through server functions, such as `create_table`. The functions behind the access rules live in the `private` schema, outside the API.
 - The keys shown by `npm run db:status` are the local Supabase demo keys, identical in every installation. Keys for the real environment never go into the repository.
 
 ## Languages

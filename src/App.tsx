@@ -4,6 +4,7 @@ import { RequireAuth } from './auth/RequireAuth'
 import { LanguageSwitcher } from './components/LanguageSwitcher'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
+import { TablePage } from './pages/TablePage'
 import { TablesPage } from './pages/TablesPage'
 
 function App() {
@@ -19,6 +20,13 @@ function App() {
             <RequireAuth>
               <TablesPage />
             </RequireAuth>
+          </Route>
+          <Route path="/mesas/:id">
+            {({ id }) => (
+              <RequireAuth>
+                <TablePage id={id} />
+              </RequireAuth>
+            )}
           </Route>
           <Route component={HomePage} />
         </Switch>

@@ -23,7 +23,21 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "health_check": {
+            "game_tables": {
+                  Row: {
+                    "created_at": string,"id": string,"name": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"name": string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"name"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"health_check": {
                   Row: {
                     "id": number,"status": string,"updated_at": string
                   }
@@ -51,16 +65,44 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"table_members": {
+                  Row: {
+                    "joined_at": string,"role": Database["public"]['Enums']["table_role"],"table_id": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "joined_at"?: string,"role": Database["public"]['Enums']["table_role"],"table_id": string,"user_id": string
+                  }
+                  Update: {
+                    "joined_at"?: string,"role"?: Database["public"]['Enums']["table_role"],"table_id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "table_members_table_id_fkey"
+      columns: ["table_id"]
+isOneToOne: false
+      referencedRelation: "game_tables"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "table_members_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Views: {
             [_ in never]: never
           }
           Functions: {
-            [_ in never]: never
+            "create_table":
+{ Args: { "table_name": string }; Returns: string
+                           }
           }
           Enums: {
-            [_ in never]: never
+            "table_role": "master"|"player"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -180,7 +222,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            
+            "table_role": ["master", "player"]
           }
         }
 } as const

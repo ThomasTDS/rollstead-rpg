@@ -33,7 +33,17 @@
   },
   "tables": {
     "title": "My tables",
-    "greeting": "Hello, {{name}}!"
+    "greeting": "Hello, {{name}}!",
+    "empty": "Create your first table.",
+    "nameLabel": "New table name",
+    "create": "Create table",
+    "invalidName": "The name must have between 1 and {{max}} characters.",
+    "notFound": "Table not found",
+    "backToList": "Back to My tables",
+    "roles": {
+      "master": "Game master",
+      "player": "Player"
+    }
   },
   "errors": {
     "generic": "Something went wrong. Try again."
