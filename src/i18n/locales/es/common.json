@@ -33,7 +33,17 @@
   },
   "tables": {
     "title": "Mis mesas",
-    "greeting": "¡Hola, {{name}}!"
+    "greeting": "¡Hola, {{name}}!",
+    "empty": "Crea tu primera mesa.",
+    "nameLabel": "Nombre de la nueva mesa",
+    "create": "Crear mesa",
+    "invalidName": "El nombre debe tener entre 1 y {{max}} caracteres.",
+    "notFound": "Mesa no encontrada",
+    "backToList": "Volver a Mis mesas",
+    "roles": {
+      "master": "Máster",
+      "player": "Jugador"
+    }
   },
   "errors": {
     "generic": "Algo salió mal. Inténtalo de nuevo."

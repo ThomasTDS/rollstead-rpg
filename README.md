@@ -140,6 +140,7 @@ O banco nunca é alterado à mão: toda mudança de estrutura vira uma migration
 - Para criar uma migration: `npx supabase migration new <nome_da_mudanca>`.
 - Uma migration já publicada não é editada; correções viram uma migration nova.
 - Toda tabela do schema `public` precisa de RLS (Row Level Security) ativada. Um teste em `supabase/tests/database/rls_enabled.test.sql` falha se alguma tabela for criada sem ela.
+- Membros de uma mesa nunca são gravados diretamente pela API: entram por funções no servidor, como `create_table`. As funções que apoiam as regras de acesso ficam no schema `private`, fora da API.
 - As chaves exibidas por `npm run db:status` são as chaves de demonstração do Supabase local, iguais em todas as instalações. As chaves do ambiente real nunca vão para o repositório.
 
 ## Idiomas

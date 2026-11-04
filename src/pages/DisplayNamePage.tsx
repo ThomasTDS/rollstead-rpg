@@ -4,7 +4,7 @@ import { useAuth } from '../auth/auth-context'
 import { Button } from '../components/Button'
 import { Field } from '../components/Field'
 import { Window } from '../components/Window'
-import { MAX_DISPLAY_NAME_LENGTH, normalizeDisplayName } from '../lib/display-name'
+import { MAX_DISPLAY_NAME_LENGTH, normalizeName } from '../lib/names'
 import { supabase } from '../lib/supabase'
 
 export function DisplayNamePage() {
@@ -16,7 +16,7 @@ export function DisplayNamePage() {
 
   async function save(event: SyntheticEvent) {
     event.preventDefault()
-    const displayName = normalizeDisplayName(name)
+    const displayName = normalizeName(name, MAX_DISPLAY_NAME_LENGTH)
     if (!session || displayName === null) {
       setErrorKey('profile.invalidName')
       return

@@ -140,6 +140,7 @@ La base de datos nunca se modifica a mano: cada cambio de estructura es una migr
 - Para crear una migración: `npx supabase migration new <nombre_del_cambio>`.
 - Una migración ya publicada no se edita; las correcciones van en una migración nueva.
 - Toda tabla del schema `public` debe tener RLS (Row Level Security) activada. Una prueba en `supabase/tests/database/rls_enabled.test.sql` falla si alguna tabla se crea sin ella.
+- Los miembros de una mesa nunca se escriben directamente por la API: entran mediante funciones en el servidor, como `create_table`. Las funciones que apoyan las reglas de acceso están en el schema `private`, fuera de la API.
 - Las claves que muestra `npm run db:status` son las claves de demostración del Supabase local, iguales en todas las instalaciones. Las claves del entorno real nunca van al repositorio.
 
 ## Idiomas

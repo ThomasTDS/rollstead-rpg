@@ -22,6 +22,8 @@ interface ApiFixtures {
   authApi: APIRequestContext
   /** Creates a new account through the real email flow and returns its API client. */
   signIn: () => Promise<SignedInUser>
+  /** Same as signIn, with the display name already chosen. */
+  signInAs: (displayName: string) => Promise<SignedInUser>
 }
 
 interface ApiWorkerFixtures {
@@ -77,6 +79,14 @@ export const test = base.extend<ApiFixtures, ApiWorkerFixtures>({
     })
 
     await Promise.all(contexts.map((context) => context.dispose()))
+  },
+
+  signInAs: async ({ signIn }, use) => {
+    await use(async (displayName) => {
+      const user = await signIn()
+      await user.api.post('profiles', { data: { id: user.id, display_name: displayName } })
+      return user
+    })
   },
 })
 
