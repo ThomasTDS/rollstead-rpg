@@ -16,7 +16,6 @@ const invitePreviewSchema = z
 
 const seatsSchema = z.array(
   z.strictObject({
-    role: z.enum(['master', 'player']),
     profiles: z.strictObject({ display_name: z.string() }),
   }),
 )
@@ -59,11 +58,11 @@ test.describe('Invites', () => {
     expect((await join(bia, token)).status()).toBe(200)
 
     const response = await bia.api.get(
-      `table_members?select=role,profiles(display_name)&table_id=eq.${tableId}&order=role`,
+      `table_members?select=profiles(display_name)&table_id=eq.${tableId}&order=joined_at`,
     )
     expect(seatsSchema.parse(await response.json())).toEqual([
-      { role: 'master', profiles: { display_name: 'Ana' } },
-      { role: 'player', profiles: { display_name: 'Bia' } },
+      { profiles: { display_name: 'Ana' } },
+      { profiles: { display_name: 'Bia' } },
     ])
   })
 

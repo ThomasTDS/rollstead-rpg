@@ -6,7 +6,6 @@ const membersSchema = z.array(
   z.strictObject({
     table_id: z.uuid(),
     user_id: z.uuid(),
-    role: z.enum(['master', 'player']),
     joined_at: z.iso.datetime({ offset: true }),
     profiles: z.strictObject({ display_name: z.string() }),
   }),
@@ -36,11 +35,10 @@ test.describe('Game tables', () => {
     const members = membersSchema.parse(await response.json())
 
     expect(members).toHaveLength(1)
-    expect(members[0]).toMatchObject({
-      user_id: ana.id,
-      role: 'master',
-      profiles: { display_name: 'Ana' },
-    })
+    expect(members[0]).toMatchObject({ user_id: ana.id, profiles: { display_name: 'Ana' } })
+
+    const table = await ana.api.get(`game_tables?select=master_id&id=eq.${tableId}`)
+    expect(await table.json()).toEqual([{ master_id: ana.id }])
   })
 
   test('stay out of reach of outsiders', async ({ signInAs }) => {
@@ -76,7 +74,7 @@ test.describe('Game tables', () => {
     expect(newTable.status()).toBe(403)
 
     const newMember = await ana.api.post('table_members', {
-      data: { table_id: tableId, user_id: ana.id, role: 'player' },
+      data: { table_id: tableId, user_id: ana.id },
     })
     expect(newMember.status()).toBe(403)
 

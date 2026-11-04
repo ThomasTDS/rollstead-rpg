@@ -2,7 +2,7 @@
 
 begin;
 
-select plan(27);
+select plan(25);
 
 insert into auth.users (id, email)
 values
@@ -16,13 +16,13 @@ values
   ('00000000-0000-0000-0000-00000000000b', 'Bia'),
   ('00000000-0000-0000-0000-00000000000c', 'Caio');
 
-insert into public.game_tables (id, name)
-values ('10000000-0000-0000-0000-000000000001', 'Mesa da Ana');
+insert into public.game_tables (id, name, master_id)
+values ('10000000-0000-0000-0000-000000000001', 'Mesa da Ana', '00000000-0000-0000-0000-00000000000a');
 
-insert into public.table_members (table_id, user_id, role)
+insert into public.table_members (table_id, user_id)
 values
-  ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000a', 'master'),
-  ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000b', 'player');
+  ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000a'),
+  ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000b');
 
 select has_table('public', 'game_tables', 'game_tables exists');
 select has_table('public', 'table_members', 'table_members exists');
@@ -50,19 +50,20 @@ select lives_ok(
   'an outsider update runs but reaches no row'
 );
 select throws_ok(
-  $$ insert into public.table_members (table_id, user_id, role)
-     values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000c', 'player') $$,
+  $$ insert into public.table_members (table_id, user_id)
+     values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000c') $$,
   '42501',
   null,
   'an outsider cannot take a seat'
 );
 select throws_ok(
-  $$ insert into public.game_tables (name) values ('Sem mestre') $$,
+  $$ insert into public.game_tables (name, master_id)
+     values ('Sem mestre', '00000000-0000-0000-0000-00000000000c') $$,
   '42501',
   null,
   'nobody creates a table without going through create_table'
 );
-select throws_ok($$ delete from public.game_tables $$, '42501', null, 'an outsider cannot delete tables');
+select lives_ok($$ delete from public.game_tables $$, 'an outsider delete runs but reaches no row');
 
 -- Bia: player at the table
 reset role;
@@ -88,12 +89,6 @@ select lives_ok(
   $$ update public.game_tables set name = 'Hacked by Bia' $$,
   'a player update runs but reaches no row'
 );
-select throws_ok(
-  $$ update public.table_members set role = 'master' $$,
-  '42501',
-  null,
-  'a player cannot promote themselves'
-);
 
 -- Ana: master of the table
 reset role;
@@ -111,12 +106,12 @@ select throws_ok(
 select throws_ok($$ delete from public.table_members $$, '42501', null, 'not even the master deletes members directly');
 select lives_ok($$ select public.create_table('Segunda mesa') $$, 'a user creates a table');
 select results_eq(
-  $$ select m.role::text
+  $$ select t.master_id
      from public.table_members m
      join public.game_tables t on t.id = m.table_id
      where t.name = 'Segunda mesa' $$,
-  $$ values ('master') $$,
-  'whoever creates a table becomes its master'
+  $$ values ('00000000-0000-0000-0000-00000000000a'::uuid) $$,
+  'whoever creates a table becomes its master, with a seat at it'
 );
 select throws_ok($$ select public.create_table('') $$, '23514', null, 'create_table rejects an empty name');
 select throws_ok(
@@ -129,13 +124,6 @@ select throws_ok(
 -- Back to the superuser
 reset role;
 
-select throws_ok(
-  $$ insert into public.table_members (table_id, user_id, role)
-     values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000c', 'master') $$,
-  '23505',
-  null,
-  'a table has a single master'
-);
 select results_eq(
   $$ select name from public.game_tables where id = '10000000-0000-0000-0000-000000000001' $$,
   $$ values ('Nova mesa') $$,

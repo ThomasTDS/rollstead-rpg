@@ -25,17 +25,29 @@ export type Database = {
           Tables: {
             "game_tables": {
                   Row: {
-                    "created_at": string,"id": string,"name": string
+                    "created_at": string,"id": string,"master_id": string,"name": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"id"?: string,"name": string
+                    "created_at"?: string,"id"?: string,"master_id": string,"name": string
                   }
                   Update: {
-                    "created_at"?: string,"id"?: string,"name"?: string
+                    "created_at"?: string,"id"?: string,"master_id"?: string,"name"?: string
                   }
                   Relationships: [
-                    
+                    {
+      foreignKeyName: "game_tables_master_id_fkey"
+      columns: ["master_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "game_tables_master_seat"
+      columns: ["id","master_id"]
+isOneToOne: false
+      referencedRelation: "table_members"
+      referencedColumns: ["table_id","user_id"]
+    }
                   ]
                 },"health_check": {
                   Row: {
@@ -87,14 +99,14 @@ isOneToOne: true
                   ]
                 },"table_members": {
                   Row: {
-                    "joined_at": string,"role": Database["public"]['Enums']["table_role"],"table_id": string,"user_id": string
+                    "joined_at": string,"table_id": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "joined_at"?: string,"role": Database["public"]['Enums']["table_role"],"table_id": string,"user_id": string
+                    "joined_at"?: string,"table_id": string,"user_id": string
                   }
                   Update: {
-                    "joined_at"?: string,"role"?: Database["public"]['Enums']["table_role"],"table_id"?: string,"user_id"?: string
+                    "joined_at"?: string,"table_id"?: string,"user_id"?: string
                   }
                   Relationships: [
                     {
@@ -136,7 +148,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "table_role": "master"|"player"
+            [_ in never]: never
           }
           CompositeTypes: {
             [_ in never]: never
@@ -256,7 +268,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "table_role": ["master", "player"]
+            
           }
         }
 } as const

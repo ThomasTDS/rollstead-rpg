@@ -5,15 +5,17 @@ import { useAuth } from '../auth/auth-context'
 import { Button, TextButton } from '../components/Button'
 import { Field } from '../components/Field'
 import { Window } from '../components/Window'
-import type { Database } from '../lib/database.types'
 import { MAX_TABLE_NAME_LENGTH, normalizeName } from '../lib/names'
+import { UNIQUE_VIOLATION } from '../lib/postgres-errors'
 import { supabase } from '../lib/supabase'
 
 interface TableRow {
   id: string
   name: string
-  role: Database['public']['Enums']['table_role']
+  role: 'master' | 'player'
 }
+
+type CreateError = 'tables.invalidName' | 'tables.duplicateName' | 'errors.generic'
 
 export function TablesPage() {
   const { t } = useTranslation()
@@ -23,7 +25,7 @@ export function TablesPage() {
   const [loadFailed, setLoadFailed] = useState(false)
   const [newName, setNewName] = useState('')
   const [creating, setCreating] = useState(false)
-  const [errorKey, setErrorKey] = useState<'tables.invalidName' | 'errors.generic' | null>(null)
+  const [errorKey, setErrorKey] = useState<CreateError | null>(null)
   const userId = session?.user.id
 
   useEffect(() => {
@@ -31,17 +33,17 @@ export function TablesPage() {
     let active = true
     void supabase
       .from('table_members')
-      .select('role, game_tables(id, name)')
+      .select('game_tables!table_members_table_id_fkey(id, name, master_id)')
       .eq('user_id', userId)
       .order('joined_at', { ascending: false })
       .then(({ data, error }) => {
         if (!active) return
         setLoadFailed(Boolean(error))
         setTables(
-          (data ?? []).map(({ role, game_tables: table }) => ({
+          (data ?? []).map(({ game_tables: table }) => ({
             id: table.id,
             name: table.name,
-            role,
+            role: table.master_id === userId ? 'master' : 'player',
           })),
         )
       })
@@ -62,7 +64,7 @@ export function TablesPage() {
     const { data, error } = await supabase.rpc('create_table', { table_name: name })
     setCreating(false)
     if (error) {
-      setErrorKey('errors.generic')
+      setErrorKey(error.code === UNIQUE_VIOLATION ? 'tables.duplicateName' : 'errors.generic')
       return
     }
     navigate(`/mesas/${data}`)

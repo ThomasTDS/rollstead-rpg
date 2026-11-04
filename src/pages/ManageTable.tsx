@@ -3,14 +3,22 @@ import { useTranslation } from 'react-i18next'
 import { Button, TextButton } from '../components/Button'
 import { Field } from '../components/Field'
 import { supabase } from '../lib/supabase'
+import { DeleteTable } from './DeleteTable'
+import { RenameTable } from './RenameTable'
 
 interface InviteState {
   tableId: string
   expiresAt: string | null
 }
 
+interface ManageTableProps {
+  tableId: string
+  tableName: string
+  onRenamed: (name: string) => void
+}
+
 /** Master-only area (NT-10). Row level security also refuses all of this to players. */
-export function ManageTable({ tableId }: { tableId: string }) {
+export function ManageTable({ tableId, tableName, onRenamed }: ManageTableProps) {
   const { t, i18n } = useTranslation()
   const [invite, setInvite] = useState<InviteState | null>(null)
   // The plain link exists only here, right after generating it: the database keeps a hash
@@ -119,6 +127,9 @@ export function ManageTable({ tableId }: { tableId: string }) {
           {t('errors.generic')}
         </p>
       )}
+
+      <RenameTable tableId={tableId} tableName={tableName} onRenamed={onRenamed} />
+      <DeleteTable tableId={tableId} tableName={tableName} />
     </section>
   )
 }
