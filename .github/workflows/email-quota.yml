@@ -1,0 +1,33 @@
+name: Email quota
+
+# Warns before the free Resend quota runs out and login emails stop. The quota day is
+# UTC, so this runs near its end. A failed run reaches the owner by GitHub's email.
+
+on:
+  schedule:
+    - cron: '30 21 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: production
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Check the daily quota
+        run: node scripts/check-email-quota.mjs
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
