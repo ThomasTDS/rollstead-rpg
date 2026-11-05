@@ -57,6 +57,14 @@
     "portrait": {
       "master": "{{name}}, game master",
       "player": "{{name}}, player"
+    },
+    "reorder": {
+      "handle": "Reorder {{name}}",
+      "instructions": "To reorder, press space, use the arrows to move and space to drop. Esc cancels.",
+      "picked": "{{name}} picked up.",
+      "over": "{{name}} over position {{position}}.",
+      "dropped": "{{name}} moved to position {{position}}.",
+      "cancelled": "Move of {{name}} cancelled."
     }
   },
   "manage": {

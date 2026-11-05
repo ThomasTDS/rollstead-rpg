@@ -57,6 +57,14 @@
     "portrait": {
       "master": "{{name}}, mestre",
       "player": "{{name}}, jogador"
+    },
+    "reorder": {
+      "handle": "Reordenar {{name}}",
+      "instructions": "Para reordenar, pressione espaço, use as setas para mover e espaço para soltar. Esc cancela.",
+      "picked": "{{name}} selecionada.",
+      "over": "{{name}} sobre a posição {{position}}.",
+      "dropped": "{{name}} movida para a posição {{position}}.",
+      "cancelled": "Movimento de {{name}} cancelado."
     }
   },
   "manage": {
