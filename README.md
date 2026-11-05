@@ -245,7 +245,7 @@ Não há senha: `/entrar` envia um e-mail com um link e um código de 6 dígitos
 
 ## Lista de mesas
 
-Cada mesa mostra os retratos dos participantes: o mestre primeiro, com contorno dourado, e os jogadores por ordem de chegada, com contorno prateado. Até 6 retratos aparecem na lista; os demais ficam em **+N**, que abre uma lista por clique, toque ou teclado. O nome aparece ao passar o cursor, ao focar ou ao tocar e segurar. Enquanto o envio de avatar não existe, todos usam o retrato genérico.
+Cada mesa mostra os retratos dos participantes: o mestre primeiro, com contorno dourado, e os jogadores por ordem de chegada, com contorno prateado. Até 6 retratos aparecem na lista; os demais ficam em **+N**, que abre uma lista por clique, toque ou teclado. O nome aparece ao passar o cursor, ao focar ou ao tocar e segurar. Enquanto o envio de avatar não existe, todos usam o retrato genérico. Cada pessoa ordena a própria lista pela alça, com mouse, teclado ou toque longo. A ordem fica salva na conta, e mesas novas entram no topo.
 
 ## Gerenciar a mesa
 

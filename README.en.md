@@ -245,7 +245,7 @@ There is no password: `/entrar` sends an email with a link and a 6-digit code, a
 
 ## Table list
 
-Each table shows the portraits of its participants: the game master first, outlined in gold, and the players by order of arrival, outlined in silver. Up to 6 portraits appear in the list; the others go to **+N**, which opens a list by click, touch or keyboard. The name appears on hover, on focus or on touch and hold. Until avatar upload exists, everyone uses the generic portrait.
+Each table shows the portraits of its participants: the game master first, outlined in gold, and the players by order of arrival, outlined in silver. Up to 6 portraits appear in the list; the others go to **+N**, which opens a list by click, touch or keyboard. The name appears on hover, on focus or on touch and hold. Until avatar upload exists, everyone uses the generic portrait. Each person orders their own list by the handle, with mouse, keyboard or touch and hold. The order is saved in the account, and new tables go to the top.
 
 ## Managing a table
 

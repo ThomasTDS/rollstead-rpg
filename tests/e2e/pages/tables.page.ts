@@ -7,6 +7,7 @@ export class TablesPage {
   readonly emptyMessage: Locator
   readonly nameInput: Locator
   readonly createButton: Locator
+  readonly tableLinks: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -15,6 +16,7 @@ export class TablesPage {
     this.emptyMessage = page.getByText('Crie sua primeira mesa.')
     this.nameInput = page.getByLabel('Nome da nova mesa')
     this.createButton = page.getByRole('button', { name: 'Criar mesa' })
+    this.tableLinks = page.getByRole('main').getByRole('link')
   }
 
   async goto() {
@@ -28,6 +30,10 @@ export class TablesPage {
   async createTable(name: string) {
     await this.nameInput.fill(name)
     await this.createButton.click()
+  }
+
+  handle(tableName: string) {
+    return this.page.getByRole('button', { name: `Reordenar ${tableName}` })
   }
 
   portrait(label: string) {

@@ -99,14 +99,14 @@ isOneToOne: true
                   ]
                 },"table_members": {
                   Row: {
-                    "joined_at": string,"table_id": string,"user_id": string
+                    "joined_at": string,"list_position": number | null,"table_id": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "joined_at"?: string,"table_id": string,"user_id": string
+                    "joined_at"?: string,"list_position"?: number | null,"table_id": string,"user_id": string
                   }
                   Update: {
-                    "joined_at"?: string,"table_id"?: string,"user_id"?: string
+                    "joined_at"?: string,"list_position"?: number | null,"table_id"?: string,"user_id"?: string
                   }
                   Relationships: [
                     {
@@ -152,6 +152,9 @@ isOneToOne: false
 { Args: { "target_table": string }; Returns: {
               "display_name": string,"user_id": string
             }[]
+                           },
+"reorder_my_tables":
+{ Args: { "table_ids": (string)[] }; Returns: undefined
                            },
 "revoke_invite":
 { Args: { "target_table": string }; Returns: undefined

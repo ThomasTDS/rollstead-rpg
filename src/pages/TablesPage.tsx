@@ -1,29 +1,19 @@
 import { useEffect, useState, type SyntheticEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation } from 'wouter'
+import { useLocation } from 'wouter'
 import { useAuth } from '../auth/auth-context'
 import { Button, TextButton } from '../components/Button'
 import { Field } from '../components/Field'
-import type { ParticipantRole } from '../components/Portrait'
-import { Tooltip } from '../components/Tooltip'
 import { Window } from '../components/Window'
 import { MAX_TABLE_NAME_LENGTH, normalizeName } from '../lib/names'
 import { UNIQUE_VIOLATION } from '../lib/postgres-errors'
 import { supabase } from '../lib/supabase'
-import { TableParticipants, type Participant } from './TableParticipants'
-
-interface TableRow {
-  id: string
-  name: string
-  role: ParticipantRole
-  created_at: string
-  participants: Participant[]
-}
+import { TableList, type TableRow } from './TableList'
 
 type CreateError = 'tables.invalidName' | 'tables.duplicateName' | 'errors.generic'
 
 export function TablesPage() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const { displayName, session } = useAuth()
   const [, navigate] = useLocation()
   const [tables, setTables] = useState<TableRow[] | null>(null)
@@ -78,27 +68,7 @@ export function TablesPage() {
         </p>
       )}
       {tables?.length === 0 && !loadFailed && <p className="mt-4">{t('tables.empty')}</p>}
-      {tables && tables.length > 0 && (
-        <ul className="mt-4 space-y-6">
-          {tables.map((table) => (
-            <li key={table.id}>
-              <Link href={`/mesas/${table.id}`} className="text-window-accent underline">
-                {table.name}
-              </Link>{' '}
-              <span>({t(`tables.roles.${table.role}`)})</span>
-              <TableParticipants participants={table.participants} />
-              <Tooltip
-                text={t('tables.createdOn', {
-                  date: new Date(table.created_at).toLocaleDateString(i18n.resolvedLanguage),
-                })}
-                className="mt-2 block text-sm focus-visible:outline-window-accent"
-              >
-                {t('tables.noSessions')}
-              </Tooltip>
-            </li>
-          ))}
-        </ul>
-      )}
+      {tables && tables.length > 0 && <TableList tables={tables} onReordered={setTables} />}
 
       <form
         onSubmit={(event) => {
