@@ -30,6 +30,18 @@ export class TablesPage {
     await this.createButton.click()
   }
 
+  portrait(label: string) {
+    return this.page.getByRole('button', { name: label, exact: true })
+  }
+
+  moreButton(count: number) {
+    return this.page.getByRole('button', { name: `Mais ${String(count)} participante` })
+  }
+
+  tooltip(text: string) {
+    return this.page.getByRole('tooltip').filter({ hasText: text })
+  }
+
   /** The list row of a table, with its name and the user's role. */
   row(name: string) {
     return this.page.getByRole('listitem').filter({ hasText: name })

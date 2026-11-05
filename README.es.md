@@ -243,6 +243,10 @@ No hay contraseña: `/entrar` envía un correo con un enlace y un código de 6 d
 - En el Supabase local, los correos no se envían de verdad: quedan en la bandeja en `http://127.0.0.1:54324`.
 - La plantilla del correo está en `supabase/templates/magic-link.html`. En los proyectos en la nube, se configura en el panel de Supabase.
 
+## Lista de mesas
+
+Cada mesa muestra los retratos de sus participantes: el máster primero, con contorno dorado, y los jugadores por orden de llegada, con contorno plateado. Hasta 6 retratos aparecen en la lista; los demás quedan en **+N**, que abre una lista con clic, toque o teclado. El nombre aparece al pasar el cursor, al enfocar o al tocar y mantener. Mientras no exista el envío de avatar, todos usan el retrato genérico.
+
 ## Gestionar la mesa
 
 En el área **Gestionar mesa**, el máster renombra y elimina la mesa, además de ocuparse de la invitación. Renombrar sigue la regla de nombre único. Eliminar pide escribir el nombre de la mesa y es definitivo: la mesa desaparece para todos los participantes y el nombre queda libre para usarse de nuevo. La base de datos rechaza ambas acciones a quien no sea el máster.

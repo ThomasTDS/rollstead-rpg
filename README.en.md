@@ -243,6 +243,10 @@ There is no password: `/entrar` sends an email with a link and a 6-digit code, a
 - In the local Supabase, emails are not really sent: they stay in the inbox at `http://127.0.0.1:54324`.
 - The email template lives in `supabase/templates/magic-link.html`. In cloud projects it is set in the Supabase dashboard.
 
+## Table list
+
+Each table shows the portraits of its participants: the game master first, outlined in gold, and the players by order of arrival, outlined in silver. Up to 6 portraits appear in the list; the others go to **+N**, which opens a list by click, touch or keyboard. The name appears on hover, on focus or on touch and hold. Until avatar upload exists, everyone uses the generic portrait.
+
 ## Managing a table
 
 In the **Manage table** area, the game master renames and deletes the table, besides handling the invite. Renaming follows the unique name rule. Deleting asks for the table name to be typed and is final: the table disappears for every participant, and the name becomes free to use again. The database refuses both actions to anyone but the game master.
