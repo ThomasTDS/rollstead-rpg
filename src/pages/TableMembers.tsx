@@ -25,22 +25,14 @@ export function TableMembers({ tableId }: { tableId: string }) {
 
   useEffect(() => {
     let active = true
-    void supabase
-      .from('table_members')
-      .select('user_id, profiles!table_members_user_id_fkey(display_name)')
-      .eq('table_id', tableId)
-      .order('joined_at')
-      .then(({ data, error }) => {
-        if (!active) return
-        if (error) setFailed(true)
-        setMembers({
-          tableId,
-          list: (data ?? []).map((seat) => ({
-            userId: seat.user_id,
-            name: seat.profiles.display_name,
-          })),
-        })
+    void supabase.rpc('list_table_seats', { target_table: tableId }).then(({ data, error }) => {
+      if (!active) return
+      if (error) setFailed(true)
+      setMembers({
+        tableId,
+        list: (data ?? []).map((seat) => ({ userId: seat.user_id, name: seat.display_name })),
       })
+    })
     return () => {
       active = false
     }

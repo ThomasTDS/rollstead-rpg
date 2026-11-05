@@ -23,7 +23,7 @@ test.describe('Removing a player', () => {
     expect(response.status()).toBe(204)
     expect(await seats(ana, tableId)).toEqual([ana.id])
     expect(await seats(bia, tableId)).toEqual([])
-    const table = await bia.api.get(`game_tables?id=eq.${tableId}`)
+    const table = await bia.api.get(`game_tables?select=name&id=eq.${tableId}`)
     expect(await table.json()).toEqual([])
   })
 
@@ -61,7 +61,7 @@ test.describe('Removing a player', () => {
 
     await joinTable(ana, bia, tableId)
 
-    expect(await seats(bia, tableId)).toHaveLength(2)
+    expect(await seats(bia, tableId)).toEqual([bia.id])
   })
 })
 

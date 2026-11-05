@@ -2,15 +2,6 @@ import { z } from 'zod'
 import { createTable, expect, test, type SignedInUser } from './fixtures'
 
 // strictObject: any extra field in the response, such as an email, fails the test
-const membersSchema = z.array(
-  z.strictObject({
-    table_id: z.uuid(),
-    user_id: z.uuid(),
-    joined_at: z.iso.datetime({ offset: true }),
-    profiles: z.strictObject({ display_name: z.string() }),
-  }),
-)
-
 async function tableNames({ api }: SignedInUser) {
   const response = await api.get('game_tables?select=name')
   const tables = z.array(z.strictObject({ name: z.string() })).parse(await response.json())
@@ -29,16 +20,13 @@ test.describe('Game tables', () => {
     const ana = await signInAs('Ana')
     const tableId = await createTable(ana, 'Mesa da Ana')
 
-    const response = await ana.api.get(
-      `table_members?select=*,profiles(display_name)&table_id=eq.${tableId}`,
-    )
-    const members = membersSchema.parse(await response.json())
+    const response = await ana.api.post('rpc/list_table_seats', {
+      data: { target_table: tableId },
+    })
+    expect(await response.json()).toStrictEqual([{ user_id: ana.id, display_name: 'Ana' }])
 
-    expect(members).toHaveLength(1)
-    expect(members[0]).toMatchObject({ user_id: ana.id, profiles: { display_name: 'Ana' } })
-
-    const table = await ana.api.get(`game_tables?select=master_id&id=eq.${tableId}`)
-    expect(await table.json()).toEqual([{ master_id: ana.id }])
+    const tables = await ana.api.post('rpc/list_my_tables')
+    expect(await tables.json()).toMatchObject([{ id: tableId, role: 'master' }])
   })
 
   test('stay out of reach of outsiders', async ({ signInAs }) => {

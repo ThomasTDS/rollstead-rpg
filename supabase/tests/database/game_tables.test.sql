@@ -77,11 +77,13 @@ select results_eq(
 );
 select results_eq(
   $$ select count(*) from public.table_members $$,
-  $$ values (2::bigint) $$,
-  'a player reads who sits at the table'
+  $$ values (1::bigint) $$,
+  'a player reads only their own seat'
 );
 select results_eq(
-  $$ select display_name from public.profiles order by display_name $$,
+  $$ select display_name from public.list_my_tables() t,
+       jsonb_to_recordset(t.participants) as p(display_name text)
+     order by display_name $$,
   $$ values ('Ana'), ('Bia') $$,
   'a player reads the names at the table, and nobody else'
 );
@@ -106,11 +108,8 @@ select throws_ok(
 select throws_ok($$ update public.table_members set joined_at = now() $$, '42501', null, 'not even the master edits a seat directly');
 select lives_ok($$ select public.create_table('Segunda mesa') $$, 'a user creates a table');
 select results_eq(
-  $$ select t.master_id
-     from public.table_members m
-     join public.game_tables t on t.id = m.table_id
-     where t.name = 'Segunda mesa' $$,
-  $$ values ('00000000-0000-0000-0000-00000000000a'::uuid) $$,
+  $$ select role from public.list_my_tables() where name = 'Segunda mesa' $$,
+  $$ values ('master') $$,
   'whoever creates a table becomes its master, with a seat at it'
 );
 select throws_ok($$ select public.create_table('') $$, '23514', null, 'create_table rejects an empty name');

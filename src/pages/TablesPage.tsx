@@ -31,22 +31,17 @@ export function TablesPage() {
   useEffect(() => {
     if (!userId) return
     let active = true
-    void supabase
-      .from('table_members')
-      .select('game_tables!table_members_table_id_fkey(id, name, master_id)')
-      .eq('user_id', userId)
-      .order('joined_at', { ascending: false })
-      .then(({ data, error }) => {
-        if (!active) return
-        setLoadFailed(Boolean(error))
-        setTables(
-          (data ?? []).map(({ game_tables: table }) => ({
-            id: table.id,
-            name: table.name,
-            role: table.master_id === userId ? 'master' : 'player',
-          })),
-        )
-      })
+    void supabase.rpc('list_my_tables').then(({ data, error }) => {
+      if (!active) return
+      setLoadFailed(Boolean(error))
+      setTables(
+        (data ?? []).map((table) => ({
+          id: table.id,
+          name: table.name,
+          role: table.role === 'master' ? 'master' : 'player',
+        })),
+      )
+    })
     return () => {
       active = false
     }

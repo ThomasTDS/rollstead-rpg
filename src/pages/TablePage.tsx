@@ -23,18 +23,15 @@ export function TablePage({ id }: { id: string }) {
     if (!userId) return
     let active = true
     void supabase
-      .from('table_members')
-      .select('game_tables!table_members_table_id_fkey(name, master_id)')
-      .eq('table_id', id)
-      .eq('user_id', userId)
+      .rpc('list_my_tables')
+      .select('name, role')
+      .eq('id', id)
       .maybeSingle()
       .then(({ data }) => {
         if (active) {
           setTable({
             id,
-            seat: data
-              ? { name: data.game_tables.name, isMaster: data.game_tables.master_id === userId }
-              : null,
+            seat: data ? { name: data.name, isMaster: data.role === 'master' } : null,
           })
         }
       })

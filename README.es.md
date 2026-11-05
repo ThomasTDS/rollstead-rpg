@@ -142,6 +142,7 @@ La base de datos nunca se modifica a mano: cada cambio de estructura es una migr
 - Toda tabla del schema `public` debe tener RLS (Row Level Security) activada. Una prueba en `supabase/tests/database/rls_enabled.test.sql` falla si alguna tabla se crea sin ella.
 - Los miembros de una mesa nunca se escriben directamente por la API: entran mediante funciones en el servidor, como `create_table`. La única escritura directa es la salida, limitada por RLS: el máster quita jugadores y cada jugador quita su propio lugar. Las funciones que apoyan las reglas de acceso están en el schema `private`, fuera de la API.
 - Cada mesa guarda al máster en `game_tables.master_id`, la única fuente de esa información. El nombre de la mesa es único por máster, sin distinguir mayúsculas de minúsculas, y la propia base de datos lo garantiza con un índice único.
+- Los participantes se ven solo por nombre y papel, mediante la función `list_my_tables`. El identificador de cada usuario queda fuera del alcance de los jugadores: solo el máster lo recibe, por `list_table_seats`, para quitar jugadores. Por eso `game_tables` no acepta `select=*`: pide las columnas por nombre.
 - Las claves que muestra `npm run db:status` son las claves de demostración del Supabase local, iguales en todas las instalaciones. Las claves del entorno real nunca van al repositorio.
 
 ## Idiomas
