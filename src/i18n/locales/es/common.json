@@ -47,7 +47,17 @@
     },
     "leaveOpen": "Salir de la mesa",
     "leaveWarning": "Pierdes el acceso a la mesa y solo vuelves con una invitación válida.",
-    "leaveConfirm": "Confirmar salida"
+    "leaveConfirm": "Confirmar salida",
+    "noSessions": "Aún sin sesiones",
+    "createdOn": "Creada el {{date}}",
+    "participants": "Participantes",
+    "masterName": "{{name}} (Máster)",
+    "moreParticipants_one": "{{count}} participante más",
+    "moreParticipants_other": "{{count}} participantes más",
+    "portrait": {
+      "master": "{{name}}, máster",
+      "player": "{{name}}, jugador"
+    }
   },
   "manage": {
     "renameLabel": "Nombre de la mesa",

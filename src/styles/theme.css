@@ -28,6 +28,10 @@
   --color-window-foreground: light-dark(#f8f5ec, #f8f5ec);
   --color-window-border: light-dark(#e8dcc0, #c9cfe8);
   --color-window-accent: light-dark(#e0b04a, #e0b04a);
+
+  /* Portrait outlines, always on the deep blue window */
+  --color-portrait-master: light-dark(#e0b04a, #e0b04a);
+  --color-portrait-player: light-dark(#c9cfe8, #c9cfe8);
 }
 
 @layer base {

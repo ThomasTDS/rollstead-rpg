@@ -243,6 +243,10 @@ Não há senha: `/entrar` envia um e-mail com um link e um código de 6 dígitos
 - No Supabase local, os e-mails não saem de verdade: ficam na caixa em `http://127.0.0.1:54324`.
 - O modelo do e-mail fica em `supabase/templates/magic-link.html`. Nos projetos na nuvem, ele é configurado no painel do Supabase.
 
+## Lista de mesas
+
+Cada mesa mostra os retratos dos participantes: o mestre primeiro, com contorno dourado, e os jogadores por ordem de chegada, com contorno prateado. Até 6 retratos aparecem na lista; os demais ficam em **+N**, que abre uma lista por clique, toque ou teclado. O nome aparece ao passar o cursor, ao focar ou ao tocar e segurar. Enquanto o envio de avatar não existe, todos usam o retrato genérico.
+
 ## Gerenciar a mesa
 
 Na área **Gerenciar mesa**, o mestre renomeia e exclui a mesa, além de cuidar do convite. Renomear segue a regra de nome único. Excluir pede a digitação do nome da mesa e é definitivo: a mesa some para todos os participantes, e o nome fica livre para ser usado de novo. O banco recusa as duas ações para quem não é o mestre.

@@ -47,7 +47,17 @@
     },
     "leaveOpen": "Leave table",
     "leaveWarning": "You lose access to the table and can only return with a valid invite.",
-    "leaveConfirm": "Confirm leaving"
+    "leaveConfirm": "Confirm leaving",
+    "noSessions": "No sessions yet",
+    "createdOn": "Created on {{date}}",
+    "participants": "Participants",
+    "masterName": "{{name}} (Game master)",
+    "moreParticipants_one": "{{count}} more participant",
+    "moreParticipants_other": "{{count}} more participants",
+    "portrait": {
+      "master": "{{name}}, game master",
+      "player": "{{name}}, player"
+    }
   },
   "manage": {
     "renameLabel": "Table name",
