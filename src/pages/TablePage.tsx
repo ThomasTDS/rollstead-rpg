@@ -4,6 +4,7 @@ import { Link } from 'wouter'
 import { useAuth } from '../auth/auth-context'
 import { Window } from '../components/Window'
 import { supabase } from '../lib/supabase'
+import { LeaveTable } from './LeaveTable'
 import { ManageTable } from './ManageTable'
 
 interface LoadedTable {
@@ -55,6 +56,15 @@ export function TablePage({ id }: { id: string }) {
           tableName={table.seat.name}
           onRenamed={(name) => {
             setTable({ id, seat: { name, isMaster: true } })
+          }}
+        />
+      )}
+      {table.seat && !table.seat.isMaster && userId && (
+        <LeaveTable
+          tableId={id}
+          userId={userId}
+          onAlreadyRemoved={() => {
+            setTable({ id, seat: null })
           }}
         />
       )}

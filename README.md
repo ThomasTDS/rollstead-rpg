@@ -140,7 +140,7 @@ O banco nunca é alterado à mão: toda mudança de estrutura vira uma migration
 - Para criar uma migration: `npx supabase migration new <nome_da_mudanca>`.
 - Uma migration já publicada não é editada; correções viram uma migration nova.
 - Toda tabela do schema `public` precisa de RLS (Row Level Security) ativada. Um teste em `supabase/tests/database/rls_enabled.test.sql` falha se alguma tabela for criada sem ela.
-- Membros de uma mesa nunca são gravados diretamente pela API: entram por funções no servidor, como `create_table`. As funções que apoiam as regras de acesso ficam no schema `private`, fora da API.
+- Membros de uma mesa nunca são gravados diretamente pela API: entram por funções no servidor, como `create_table`. A única escrita direta é a saída, limitada por RLS: o mestre remove jogadores e cada jogador remove o próprio lugar. As funções que apoiam as regras de acesso ficam no schema `private`, fora da API.
 - Cada mesa guarda o mestre em `game_tables.master_id`, a única fonte dessa informação. O nome da mesa é único por mestre, sem diferenciar maiúsculas de minúsculas, e o próprio banco garante isso com um índice único.
 - As chaves exibidas por `npm run db:status` são as chaves de demonstração do Supabase local, iguais em todas as instalações. As chaves do ambiente real nunca vão para o repositório.
 
@@ -245,6 +245,8 @@ Não há senha: `/entrar` envia um e-mail com um link e um código de 6 dígitos
 ## Gerenciar a mesa
 
 Na área **Gerenciar mesa**, o mestre renomeia e exclui a mesa, além de cuidar do convite. Renomear segue a regra de nome único. Excluir pede a digitação do nome da mesa e é definitivo: a mesa some para todos os participantes, e o nome fica livre para ser usado de novo. O banco recusa as duas ações para quem não é o mestre.
+
+A mesma área lista os participantes, e o mestre pode remover um jogador. Quem é removido perde o acesso na hora, mas pode voltar com um convite válido; para impedir, revogue o link. O jogador sai sozinho em **Sair da mesa**. O mestre não sai nem é removido da própria mesa.
 
 ## Convites
 

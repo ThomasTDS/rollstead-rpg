@@ -140,7 +140,7 @@ La base de datos nunca se modifica a mano: cada cambio de estructura es una migr
 - Para crear una migración: `npx supabase migration new <nombre_del_cambio>`.
 - Una migración ya publicada no se edita; las correcciones van en una migración nueva.
 - Toda tabla del schema `public` debe tener RLS (Row Level Security) activada. Una prueba en `supabase/tests/database/rls_enabled.test.sql` falla si alguna tabla se crea sin ella.
-- Los miembros de una mesa nunca se escriben directamente por la API: entran mediante funciones en el servidor, como `create_table`. Las funciones que apoyan las reglas de acceso están en el schema `private`, fuera de la API.
+- Los miembros de una mesa nunca se escriben directamente por la API: entran mediante funciones en el servidor, como `create_table`. La única escritura directa es la salida, limitada por RLS: el máster quita jugadores y cada jugador quita su propio lugar. Las funciones que apoyan las reglas de acceso están en el schema `private`, fuera de la API.
 - Cada mesa guarda al máster en `game_tables.master_id`, la única fuente de esa información. El nombre de la mesa es único por máster, sin distinguir mayúsculas de minúsculas, y la propia base de datos lo garantiza con un índice único.
 - Las claves que muestra `npm run db:status` son las claves de demostración del Supabase local, iguales en todas las instalaciones. Las claves del entorno real nunca van al repositorio.
 
@@ -245,6 +245,8 @@ No hay contraseña: `/entrar` envía un correo con un enlace y un código de 6 d
 ## Gestionar la mesa
 
 En el área **Gestionar mesa**, el máster renombra y elimina la mesa, además de ocuparse de la invitación. Renombrar sigue la regla de nombre único. Eliminar pide escribir el nombre de la mesa y es definitivo: la mesa desaparece para todos los participantes y el nombre queda libre para usarse de nuevo. La base de datos rechaza ambas acciones a quien no sea el máster.
+
+La misma área lista a los participantes, y el máster puede quitar a un jugador. Quien es quitado pierde el acceso al momento, pero puede volver con una invitación válida; para impedirlo, revoca el enlace. El jugador sale por su cuenta en **Salir de la mesa**. El máster no sale ni es quitado de su propia mesa.
 
 ## Invitaciones
 

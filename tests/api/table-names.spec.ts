@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { createTable, expect, test, type SignedInUser } from './fixtures'
+import { createTable, expect, joinTable, test, type SignedInUser } from './fixtures'
 
 function requestTable({ api }: SignedInUser, name: string) {
   return api.post('rpc/create_table', { data: { table_name: name } })
@@ -9,13 +9,6 @@ async function tableNames({ api }: SignedInUser) {
   const response = await api.get('game_tables?select=name&order=name')
   const tables = z.array(z.strictObject({ name: z.string() })).parse(await response.json())
   return tables.map((table) => table.name)
-}
-
-async function joinTable(master: SignedInUser, player: SignedInUser, tableId: string) {
-  const invite = await master.api.post('rpc/create_invite', { data: { target_table: tableId } })
-  const token = z.string().parse(await invite.json())
-  const joined = await player.api.post('rpc/join_table', { data: { invite_token: token } })
-  expect(joined.status()).toBe(200)
 }
 
 test.describe('Table names', () => {

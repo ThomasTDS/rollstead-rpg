@@ -44,7 +44,10 @@
     "roles": {
       "master": "Máster",
       "player": "Jugador"
-    }
+    },
+    "leaveOpen": "Salir de la mesa",
+    "leaveWarning": "Pierdes el acceso a la mesa y solo vuelves con una invitación válida.",
+    "leaveConfirm": "Confirmar salida"
   },
   "manage": {
     "renameLabel": "Nombre de la mesa",
@@ -64,7 +67,12 @@
     "linkOnce": "Cópialo ahora: por seguridad, este enlace solo aparece una vez.",
     "copy": "Copiar enlace",
     "copied": "¡Copiado!",
-    "revoke": "Revocar enlace"
+    "revoke": "Revocar enlace",
+    "membersTitle": "Participantes",
+    "remove": "Quitar",
+    "removeOpen": "Quitar a {{name}}",
+    "removeWarning": "{{name}} pierde el acceso a la mesa al momento, pero puede volver con una invitación válida. Para impedirlo, revoca el enlace.",
+    "removeConfirm": "Quitar de la mesa"
   },
   "invites": {
     "title": "Has recibido una invitación",

@@ -44,7 +44,10 @@
     "roles": {
       "master": "Game master",
       "player": "Player"
-    }
+    },
+    "leaveOpen": "Leave table",
+    "leaveWarning": "You lose access to the table and can only return with a valid invite.",
+    "leaveConfirm": "Confirm leaving"
   },
   "manage": {
     "renameLabel": "Table name",
@@ -64,7 +67,12 @@
     "linkOnce": "Copy it now: for security, this link is shown only once.",
     "copy": "Copy link",
     "copied": "Copied!",
-    "revoke": "Revoke link"
+    "revoke": "Revoke link",
+    "membersTitle": "Participants",
+    "remove": "Remove",
+    "removeOpen": "Remove {{name}}",
+    "removeWarning": "{{name}} loses access to the table at once, but can return with a valid invite. To prevent that, revoke the link.",
+    "removeConfirm": "Remove from table"
   },
   "invites": {
     "title": "You have been invited",
