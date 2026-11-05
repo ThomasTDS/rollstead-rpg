@@ -143,6 +143,16 @@ isOneToOne: false
 "join_table":
 { Args: { "invite_token": string }; Returns: string
                            },
+"list_my_tables":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "created_at": string,"id": string,"name": string,"participants": Json,"role": string
+            }[]
+                           },
+"list_table_seats":
+{ Args: { "target_table": string }; Returns: {
+              "display_name": string,"user_id": string
+            }[]
+                           },
 "revoke_invite":
 { Args: { "target_table": string }; Returns: undefined
                            }

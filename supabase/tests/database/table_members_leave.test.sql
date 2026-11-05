@@ -79,7 +79,7 @@ select is_empty(
   'a removed player no longer sees the seats'
 );
 select is_empty(
-  $$ select 1 from public.profiles where id = '00000000-0000-0000-0000-00000000000a' $$,
+  $$ select 1 from public.list_my_tables() $$,
   'a removed player no longer reads the names of that table'
 );
 

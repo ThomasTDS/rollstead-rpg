@@ -142,6 +142,7 @@ O banco nunca é alterado à mão: toda mudança de estrutura vira uma migration
 - Toda tabela do schema `public` precisa de RLS (Row Level Security) ativada. Um teste em `supabase/tests/database/rls_enabled.test.sql` falha se alguma tabela for criada sem ela.
 - Membros de uma mesa nunca são gravados diretamente pela API: entram por funções no servidor, como `create_table`. A única escrita direta é a saída, limitada por RLS: o mestre remove jogadores e cada jogador remove o próprio lugar. As funções que apoiam as regras de acesso ficam no schema `private`, fora da API.
 - Cada mesa guarda o mestre em `game_tables.master_id`, a única fonte dessa informação. O nome da mesa é único por mestre, sem diferenciar maiúsculas de minúsculas, e o próprio banco garante isso com um índice único.
+- Participantes se veem só por nome e papel, pela função `list_my_tables`. O identificador de cada usuário fica fora do alcance dos jogadores: só o mestre o recebe, por `list_table_seats`, para remover jogadores. Por isso `game_tables` não aceita `select=*`: peça as colunas pelo nome.
 - As chaves exibidas por `npm run db:status` são as chaves de demonstração do Supabase local, iguais em todas as instalações. As chaves do ambiente real nunca vão para o repositório.
 
 ## Idiomas
