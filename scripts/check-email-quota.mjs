@@ -3,7 +3,7 @@
 // address. That spends 1 of the daily quota.
 const DEFAULT_LIMIT = 70
 
-const apiKey = process.env.RESEND_API_KEY
+const apiKey = process.env.RESEND_API_KEY?.trim()
 if (!apiKey) {
   console.error('RESEND_API_KEY is missing.')
   process.exit(1)
@@ -30,6 +30,7 @@ const quota = response.headers.get('x-resend-daily-quota')
 
 if (!response.ok || quota === null) {
   console.error(`Could not read the quota: HTTP ${String(response.status)}.`)
+  console.error(await response.text())
   process.exit(1)
 }
 
