@@ -8,8 +8,10 @@ import { Button, TextButton } from '../components/Button'
 import { Field } from '../components/Field'
 import { Window } from '../components/Window'
 import { supabase } from '../lib/supabase'
+import { TestLogin } from './TestLogin'
 
 const CODE_LENGTH = 6
+const TEST_LOGIN = import.meta.env.VITE_TEST_LOGIN === 'true'
 
 export function LoginPage() {
   const { t } = useTranslation()
@@ -117,6 +119,8 @@ export function LoginPage() {
           {t(errorKey)}
         </p>
       )}
+
+      {TEST_LOGIN && <TestLogin />}
     </Window>
   )
 }

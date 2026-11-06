@@ -22,7 +22,9 @@
       "invalidLink": "This link is invalid, expired or already used. Request a new one.",
       "invalidEmail": "Check the email you typed.",
       "tooManyRequests": "Too many attempts. Wait a moment and try again."
-    }
+    },
+    "testLogin": "Test login",
+    "testLoginAs": "Sign in as {{name}} ({{role}})"
   },
   "profile": {
     "title": "What should we call you?",

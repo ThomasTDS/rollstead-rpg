@@ -22,7 +22,9 @@
       "invalidLink": "Este enlace no es válido, caducó o ya se usó. Pide uno nuevo.",
       "invalidEmail": "Revisa el correo que escribiste.",
       "tooManyRequests": "Demasiados intentos. Espera un momento e inténtalo de nuevo."
-    }
+    },
+    "testLogin": "Inicio de sesión de prueba",
+    "testLoginAs": "Entrar como {{name}} ({{role}})"
   },
   "profile": {
     "title": "¿Cómo quieres que te llamemos?",

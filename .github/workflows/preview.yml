@@ -67,6 +67,7 @@ jobs:
         env:
           VITE_SUPABASE_URL: https://${{ env.SUPABASE_PROJECT_REF }}.supabase.co
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_STAGING_PUBLISHABLE_KEY }}
+          VITE_TEST_LOGIN: 'true'
 
       - name: Publish the Cloudflare preview
         id: preview
