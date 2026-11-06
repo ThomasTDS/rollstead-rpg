@@ -48,6 +48,10 @@ jobs:
           VITE_SUPABASE_URL: https://tfvnmafqramhmmbhmsvb.supabase.co
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY || 'no-key-in-this-build' }}
 
+      # The test login must never reach production
+      - name: Test login left out of the bundle
+        run: "! grep -rq 'rollstead-teste' dist"
+
       - name: Upload build
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -159,6 +163,8 @@ jobs:
           VITE_SUPABASE_PUBLISHABLE_KEY=$(printf '%s' "$status" | jq -er '.ANON_KEY')
           export VITE_SUPABASE_URL VITE_SUPABASE_PUBLISHABLE_KEY
           npm run build
+        env:
+          VITE_TEST_LOGIN: 'true'
 
       - name: Install Chromium
         run: npx playwright install --with-deps --only-shell chromium
@@ -331,6 +337,7 @@ jobs:
         run: npm run test:smoke
         env:
           PLAYWRIGHT_BASE_URL: https://rollstead.com.br
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
 
       - name: Upload Playwright report
         if: failure()

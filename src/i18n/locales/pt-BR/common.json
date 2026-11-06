@@ -22,7 +22,9 @@
       "invalidLink": "Este link é inválido, expirou ou já foi usado. Peça um novo.",
       "invalidEmail": "Confira o e-mail digitado.",
       "tooManyRequests": "Muitas tentativas. Aguarde um pouco e tente de novo."
-    }
+    },
+    "testLogin": "Login de teste",
+    "testLoginAs": "Entrar como {{name}} ({{role}})"
   },
   "profile": {
     "title": "Como quer ser chamado?",
