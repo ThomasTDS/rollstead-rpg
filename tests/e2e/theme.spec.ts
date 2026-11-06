@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test'
+import type { Locator, Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 
 /** Computed page colors, as the browser resolves the theme tokens. */
@@ -37,5 +37,32 @@ test.describe('Theme', () => {
     await page.emulateMedia({ colorScheme: 'dark' })
     expect(forcedDark).toEqual(await pageColors(page))
     expect(forcedDark.background).not.toBe(light.background)
+  })
+
+  test('keeps the keyboard focus visible on links inside the window', async ({
+    page,
+    tablesPage,
+  }) => {
+    // Window links are gold on deep blue: the page's accent ring would be too faint there
+    const ringMatchesText = (link: Locator) =>
+      link.evaluate((element) => {
+        const style = getComputedStyle(element)
+        return style.outlineColor === style.color
+      })
+
+    await page.emulateMedia({ colorScheme: 'light' })
+    await page.goto('/entrar')
+    await page.getByRole('button', { name: 'Entrar como Ana (Mestre)' }).click()
+    await expect(tablesPage.title).toBeVisible()
+
+    const tableLink = page.getByRole('link', { name: 'A Mina Perdida' })
+    await page.keyboard.press('Tab')
+    await tableLink.focus()
+    expect(await ringMatchesText(tableLink)).toBe(true)
+
+    await tableLink.press('Enter')
+    const backLink = page.getByRole('link', { name: 'Voltar para Minhas mesas' })
+    await backLink.focus()
+    expect(await ringMatchesText(backLink)).toBe(true)
   })
 })

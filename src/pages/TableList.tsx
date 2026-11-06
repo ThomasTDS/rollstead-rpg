@@ -154,7 +154,10 @@ function TableItem({ table }: { table: TableRow }) {
         </svg>
       </button>
       <div className="min-w-0">
-        <Link href={`/mesas/${table.id}`} className="text-window-accent underline">
+        <Link
+          href={`/mesas/${table.id}`}
+          className="text-window-accent underline focus-visible:outline-window-accent"
+        >
           {table.name}
         </Link>{' '}
         <span>({t(`tables.roles.${table.role}`)})</span>
