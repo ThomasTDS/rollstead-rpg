@@ -16,6 +16,7 @@ export default tseslint.config(
       'test-results',
       'blob-report',
       'lighthouse-report',
+      'screenshots',
       'src/lib/database.types.ts',
     ],
   },

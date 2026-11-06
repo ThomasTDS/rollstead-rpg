@@ -79,7 +79,10 @@ export function InvitePage({ token }: { token: string }) {
           {t(errorKey)}
         </p>
       )}
-      <Link href="/mesas" className="mt-4 block text-window-accent underline">
+      <Link
+        href="/mesas"
+        className="mt-4 block text-window-accent underline focus-visible:outline-window-accent"
+      >
         {t('tables.backToList')}
       </Link>
     </Window>

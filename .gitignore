@@ -22,6 +22,7 @@ test-results/
 playwright-report/
 blob-report/
 lighthouse-report/
+screenshots/
 playwright/.cache/
 
 # Logs

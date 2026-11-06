@@ -65,7 +65,10 @@ export function TablePage({ id }: { id: string }) {
           }}
         />
       )}
-      <Link href="/mesas" className="mt-4 block text-window-accent underline">
+      <Link
+        href="/mesas"
+        className="mt-4 block text-window-accent underline focus-visible:outline-window-accent"
+      >
         {t('tables.backToList')}
       </Link>
     </Window>
