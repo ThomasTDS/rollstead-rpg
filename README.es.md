@@ -331,3 +331,7 @@ Si se envía un secreto real por error, borrarlo del código no basta: sigue en 
 - Lint con reglas de TypeScript (con verificación de tipos), React Hooks y accesibilidad (`jsx-a11y`).
 - Formato automático con Prettier: sin punto y coma, comillas simples y líneas de hasta 100 caracteres.
 - Saltos de línea LF en todos los sistemas operativos, garantizados por `.gitattributes`.
+
+## Licencia
+
+Código con todos los derechos reservados. El repositorio es público para su lectura, sin licencia de uso. Consulta [LICENSE](LICENSE).

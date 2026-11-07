@@ -331,3 +331,7 @@ If a real secret is pushed by mistake, deleting it from the code is not enough: 
 - Linting with TypeScript (type-aware), React Hooks and accessibility (`jsx-a11y`) rules.
 - Automatic formatting with Prettier: no semicolons, single quotes and lines up to 100 characters.
 - LF line endings on every operating system, enforced by `.gitattributes`.
+
+## License
+
+All rights reserved. The repository is public for reading, with no license to use it. See [LICENSE](LICENSE).
