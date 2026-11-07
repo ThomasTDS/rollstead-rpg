@@ -331,3 +331,7 @@ Se um segredo real for enviado por engano, apagá-lo do código não basta: ele 
 - Lint com regras de TypeScript (com checagem de tipos), React Hooks e acessibilidade (`jsx-a11y`).
 - Formatação automática com Prettier: sem ponto e vírgula, aspas simples e linhas de até 100 caracteres.
 - Quebras de linha no padrão LF em todos os sistemas operacionais, garantidas pelo `.gitattributes`.
+
+## Licença
+
+Código com todos os direitos reservados. O repositório é público para leitura, sem licença de uso. Veja [LICENSE](LICENSE).
