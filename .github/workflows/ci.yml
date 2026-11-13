@@ -272,9 +272,10 @@ jobs:
       - name: Link the production project
         run: npx supabase link --project-ref "$SUPABASE_PROJECT_REF"
 
-      # Applies only migrations not yet recorded in production; seed.sql is never sent
+      # Applies only migrations not yet recorded in production; seed.sql is never sent.
+      # --yes: since Supabase CLI 3, a run without a terminal must confirm explicitly
       - name: Apply database migrations
-        run: npx supabase db push --linked
+        run: npx supabase db push --linked --yes
 
   deploy:
     name: deploy
