@@ -26,3 +26,12 @@ test.describe('GET /rest/v1/health_check', () => {
     expect(response.status()).toBe(401)
   })
 })
+
+test.describe('POST /rest/v1/rpc/keep_alive', () => {
+  test('returns the last write time to the anon key', async ({ anonApi }) => {
+    const response = await anonApi.post('rpc/keep_alive', { data: {} })
+
+    expect(response.status()).toBe(200)
+    z.iso.datetime({ offset: true }).parse(await response.json())
+  })
+})
