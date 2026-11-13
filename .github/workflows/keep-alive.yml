@@ -1,9 +1,10 @@
 name: Keep-alive
 
 # Free Supabase projects pause after 7 days without "sufficient activity", a
-# threshold Supabase does not publish. One read every 3 days was not enough for
-# staging (warning e-mail on 2026-11-09), so both projects (production and staging)
-# are now pinged every day, on the database and on the login service. Only the
+# threshold Supabase does not publish. Reads were not enough: staging was warned on
+# 2026-11-09 with a read every 3 days, and production on 2026-11-13 with daily reads.
+# Each ping now also writes to the database through public.keep_alive() (at most one
+# write an hour), four times a day, plus a read and the login service. Only the
 # public (publishable) keys are used, never a service key.
 #
 # GitHub disables scheduled workflows in public repositories after 60 days without
@@ -11,7 +12,7 @@ name: Keep-alive
 
 on:
   schedule:
-    - cron: '17 9 * * *'
+    - cron: '17 */6 * * *'
   workflow_dispatch:
 
 permissions: {}
@@ -29,6 +30,14 @@ jobs:
       SUPABASE_URL: ${{ matrix.project == 'staging' && 'https://jgunfwjjdadgaztlpsjc.supabase.co' || 'https://tfvnmafqramhmmbhmsvb.supabase.co' }}
       SUPABASE_PUBLISHABLE_KEY: ${{ matrix.project == 'staging' && secrets.SUPABASE_STAGING_PUBLISHABLE_KEY || secrets.SUPABASE_PUBLISHABLE_KEY }}
     steps:
+      - name: Write to the database
+        run: |
+          response=$(curl -sS --fail-with-body --retry 3 --retry-delay 20 \
+            -X POST -H "apikey: ${SUPABASE_PUBLISHABLE_KEY}" \
+            -H "Content-Type: application/json" -d '{}' \
+            "${SUPABASE_URL}/rest/v1/rpc/keep_alive")
+          echo "Last write: ${response}"
+
       - name: Read the health check row
         run: |
           response=$(curl -sS --fail-with-body --retry 3 --retry-delay 20 \
