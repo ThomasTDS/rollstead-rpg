@@ -14,6 +14,8 @@ interface PageFixtures {
   tablePage: TablePage
   /** Creates a new account on the given page, through the real email flow. */
   signUp: (page: Page, displayName: string) => Promise<void>
+  /** Fails any test whose page broke the content security policy. */
+  contentPolicyGuard: undefined
 }
 
 interface WorkerFixtures {
@@ -48,6 +50,20 @@ export const test = base.extend<PageFixtures, WorkerFixtures>({
       await new TablesPage(page).title.waitFor()
     })
   },
+  contentPolicyGuard: [
+    async ({ page }, use) => {
+      // Chromium reports every blocked script, style or request as a console error
+      const violations: string[] = []
+      page.on('console', (message) => {
+        if (message.type() === 'error' && message.text().includes('Content Security Policy')) {
+          violations.push(message.text())
+        }
+      })
+      await use(undefined)
+      base.expect(violations, 'content security policy violations').toEqual([])
+    },
+    { auto: true },
+  ],
   mailpitUrl: [
     // eslint-disable-next-line no-empty-pattern -- Playwright requires an object pattern here
     async ({}, use) => {
