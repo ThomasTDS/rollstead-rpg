@@ -18,10 +18,13 @@ concurrency:
 jobs:
   preview:
     name: preview
-    # Only branches of this repository: forks and Dependabot never get the staging secrets
+    # Only branches of this repository: forks and Dependabot never get the staging secrets.
+    # Dependabot is told apart by its branch, not by who pushed: a commit by the owner on
+    # a Dependabot branch would otherwise run its new dependencies with the secrets.
     if: >-
       github.event.pull_request.head.repo.full_name == github.repository &&
-      github.actor != 'dependabot[bot]'
+      github.actor != 'dependabot[bot]' &&
+      !startsWith(github.head_ref, 'dependabot/')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
