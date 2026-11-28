@@ -253,10 +253,10 @@ jobs:
     concurrency:
       group: migrate-production
       cancel-in-progress: false
+    # The production token and password reach only the two steps that use them, never
+    # npm ci, where install scripts of third party packages run
     env:
       SUPABASE_PROJECT_REF: tfvnmafqramhmmbhmsvb
-      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -271,11 +271,17 @@ jobs:
 
       - name: Link the production project
         run: npx supabase link --project-ref "$SUPABASE_PROJECT_REF"
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
       # Applies only migrations not yet recorded in production; seed.sql is never sent.
       # --yes: since Supabase CLI 3, a run without a terminal must confirm explicitly
       - name: Apply database migrations
         run: npx supabase db push --linked --yes
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
   deploy:
     name: deploy
